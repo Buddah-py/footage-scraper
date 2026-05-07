@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOOTAGE SCRAPER — Faceless YT Edition</title>
+<title>FOOTAGE SCRAPER PRO — True Crime Edition</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -18,9 +18,6 @@
     --red: #f87171;
     --text: #e8e8e8;
     --muted: #666;
-    --coverr: #7c3aed;
-    --openverse: #0ea5e9;
-    --pexels: #05a081;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,1046 +30,1345 @@
     padding: 0 0 80px;
   }
 
+  /* ── HEADER ── */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 28px 40px 24px;
+    padding: 26px 40px 22px;
     display: flex;
     align-items: flex-end;
     gap: 20px;
+    flex-wrap: wrap;
   }
   .header-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
+    font-size: 40px;
     letter-spacing: 3px;
     color: var(--gold);
     line-height: 1;
   }
   .header-sub {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--muted);
     letter-spacing: 1px;
     text-transform: uppercase;
-    padding-bottom: 6px;
+    padding-bottom: 5px;
   }
   .source-badges {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     margin-left: auto;
-    padding-bottom: 4px;
+    padding-bottom: 3px;
+    flex-wrap: wrap;
   }
   .badge {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    padding: 4px 10px;
+    font-size: 9px;
+    padding: 3px 9px;
     border-radius: 2px;
     letter-spacing: 1px;
     font-weight: 500;
   }
-  .badge-coverr { background: rgba(124,58,237,0.2); color: #a78bfa; border: 1px solid rgba(124,58,237,0.4); }
-  .badge-openverse { background: rgba(14,165,233,0.2); color: #7dd3fc; border: 1px solid rgba(14,165,233,0.4); }
-  .badge-pexels { background: rgba(5,160,129,0.15); color: #6ee7b7; border: 1px solid rgba(5,160,129,0.35); }
-  .badge-cc0 { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+  .b-claude   { background: rgba(201,168,76,.15);  color: var(--gold);   border: 1px solid rgba(201,168,76,.3); }
+  .b-tc       { background: rgba(239,68,68,.15);   color: #fca5a5;       border: 1px solid rgba(239,68,68,.3); }
+  .b-archive  { background: rgba(14,165,233,.15);  color: #7dd3fc;       border: 1px solid rgba(14,165,233,.3); }
+  .b-cc0      { background: rgba(74,222,128,.15);  color: #86efac;       border: 1px solid rgba(74,222,128,.3); }
 
-  .main { max-width: 1200px; margin: 0 auto; padding: 40px 40px 0; display: grid; grid-template-columns: 380px 1fr; gap: 32px; }
+  /* ── LAYOUT ── */
+  .main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 40px 0;
+    display: grid;
+    grid-template-columns: 390px 1fr;
+    gap: 28px;
+  }
+  .left-col { display: flex; flex-direction: column; gap: 14px; }
 
+  /* ── PANEL ── */
   .panel { background: var(--surface); border: 1px solid var(--border); }
   .panel-header {
-    padding: 16px 20px;
+    padding: 14px 18px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .panel-header-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .panel-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    color: var(--gold);
-    line-height: 1;
-  }
+  .panel-num   { font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: var(--gold); line-height: 1; }
+  .panel-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
 
-  .script-wrap { padding: 20px; }
+  /* ── INPUTS ── */
   textarea {
-    width: 100%;
-    height: 220px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    line-height: 1.7;
-    padding: 16px;
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.2s;
+    width: 100%; height: 190px;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 11px;
+    line-height: 1.7; padding: 14px; resize: vertical; outline: none;
+    transition: border-color .2s;
   }
   textarea:focus { border-color: var(--gold-dim); }
-  textarea::placeholder { color: #333; }
+  textarea::placeholder { color: #2a2a2a; }
+  .pw { padding: 16px; }
 
-  .keys-wrap { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .keys-wrap { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
   .field-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 7px;
   }
-  .field-label .req { color: var(--red); }
-  .field-label .src-dot {
-    width: 6px; height: 6px; border-radius: 50%; display: inline-block;
-  }
-  .dot-openrouter { background: var(--gold); }
-  .dot-pexels { background: var(--pexels); }
+  .req { color: var(--red); }
+  .src-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
   input[type="text"], input[type="password"] {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 11px;
+    padding: 9px 12px; outline: none; transition: border-color .2s; width: 100%;
   }
   input:focus { border-color: var(--gold-dim); }
-  .field-hint { font-size: 10px; color: #444; font-family: 'DM Mono', monospace; }
+  .field-hint { font-size: 10px; color: #3a3a3a; font-family: 'DM Mono', monospace; }
   .field-hint a { color: var(--gold-dim); text-decoration: none; }
   .field-hint a:hover { color: var(--gold); }
 
-  .opts-wrap { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-  .opts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .opt-item { display: flex; flex-direction: column; gap: 6px; }
+  /* ── OPTIONS ── */
+  .opts { padding: 16px; display: flex; flex-direction: column; gap: 13px; }
+  .opts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .opt-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 5px;
   }
-  input[type="number"] {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    padding: 10px 14px;
-    outline: none;
-    width: 100%;
-    transition: border-color 0.2s;
+  input[type="number"], select {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px;
+    padding: 9px 12px; outline: none; width: 100%; transition: border-color .2s; cursor: pointer;
   }
-  input[type="number"]:focus { border-color: var(--gold-dim); }
-  select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 10px 14px;
-    outline: none;
-    width: 100%;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  select:focus { border-color: var(--gold-dim); }
+  input[type="number"]:focus, select:focus { border-color: var(--gold-dim); }
 
-  .source-toggles {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+  /* ── SOURCE TOGGLES ── */
+  .src-section-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase; color: #3a3a3a;
+    margin: 4px 0 5px;
   }
-  .src-toggle {
-    border: 1px solid var(--border);
-    padding: 10px 8px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    transition: all 0.15s;
-    background: var(--bg);
-    user-select: none;
+  .src-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+  .src-grid2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; }
+  .src-t {
+    border: 1px solid var(--border); padding: 9px 6px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 3px; align-items: center;
+    background: var(--bg); user-select: none; transition: all .15s;
   }
-  .src-toggle.active-coverr { border-color: var(--coverr); background: rgba(124,58,237,0.1); }
-  .src-toggle.active-openverse { border-color: var(--openverse); background: rgba(14,165,233,0.1); }
-  .src-toggle.active-pexels { border-color: var(--pexels); background: rgba(5,160,129,0.1); }
-  .src-toggle-name {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .src-toggle-note { font-size: 9px; color: var(--muted); text-align: center; }
+  .src-t .sn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .src-t .ss { font-size: 9px; color: var(--muted); text-align: center; }
+  .src-t.on-ia  { border-color: #c9a84c; background: rgba(201,168,76,.08); }
+  .src-t.on-op  { border-color: #0ea5e9; background: rgba(14,165,233,.1); }
+  .src-t.on-cov { border-color: #7c3aed; background: rgba(124,58,237,.1); }
+  .src-t.on-wtv { border-color: #ef4444; background: rgba(239,68,68,.1); }
+  .src-t.on-dp  { border-color: #8b5cf6; background: rgba(139,92,246,.1); }
+  .src-t.on-pex { border-color: #05a081; background: rgba(5,160,129,.1); }
 
-  .media-toggles { display: flex; gap: 8px; }
-  .med-toggle {
-    flex: 1;
-    border: 1px solid var(--border);
-    padding: 8px;
-    cursor: pointer;
-    text-align: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    background: var(--bg);
-    transition: all 0.15s;
-    user-select: none;
-    color: var(--muted);
+  /* ── NOTICE ── */
+  .notice {
+    padding: 10px 13px;
+    background: rgba(201,168,76,.05); border: 1px solid rgba(201,168,76,.15);
+    font-family: 'DM Mono', monospace; font-size: 10px; color: #6a5a2a; line-height: 1.7;
   }
-  .med-toggle.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .notice strong { color: var(--gold); }
+  .notice .tc-tip { color: #fca5a5; font-size: 9px; margin-top: 5px; display: block; }
 
+  /* ── RUN BUTTON ── */
   .run-btn {
-    background: var(--gold);
-    color: #000;
-    border: none;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-    padding: 18px;
-    width: 100%;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 4px;
+    background: var(--gold); color: #000; border: none;
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+    letter-spacing: 3px; padding: 16px; width: 100%;
+    cursor: pointer; transition: all .2s; margin-top: 2px;
   }
   .run-btn:hover:not(:disabled) { background: #dbb85a; transform: translateY(-1px); }
-  .run-btn:disabled { background: var(--gold-dim); cursor: not-allowed; opacity: 0.6; }
+  .run-btn:active:not(:disabled) { transform: translateY(0); }
+  .run-btn:disabled { background: var(--gold-dim); cursor: not-allowed; opacity: .6; }
 
-  .status-bar {
-    margin: 16px 20px 0;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 12px 16px;
-    border-left: 3px solid var(--border);
-    color: var(--muted);
-    background: var(--bg);
-    min-height: 44px;
-    display: none;
+  /* ── STATUS / PROGRESS ── */
+  .status {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    padding: 10px 14px; border-left: 3px solid var(--border);
+    color: var(--muted); background: var(--bg);
+    margin-top: 10px; display: none; min-height: 36px;
   }
-  .status-bar.visible { display: block; }
-  .status-bar.running { border-color: var(--gold); color: var(--gold); }
-  .status-bar.done { border-color: var(--green); color: var(--green); }
-  .status-bar.error { border-color: var(--red); color: var(--red); }
+  .status.vis  { display: block; }
+  .status.run  { border-color: var(--gold); color: var(--gold); }
+  .status.done { border-color: var(--green); color: var(--green); }
+  .status.err  { border-color: var(--red); color: var(--red); }
 
-  .progress-wrap { margin: 0 20px 20px; display: none; }
-  .progress-wrap.visible { display: block; }
-  .progress-bar {
-    height: 2px;
-    background: var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--gold);
-    transition: width 0.3s ease;
-  }
-  .progress-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 6px; }
+  .prog-wrap { margin-top: 6px; display: none; }
+  .prog-wrap.vis { display: block; }
+  .prog-bar  { height: 2px; background: var(--border); }
+  .prog-fill { height: 100%; background: var(--gold); transition: width .3s; }
+  .prog-lbl  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 5px; }
 
-  .results-area { display: flex; flex-direction: column; gap: 0; }
+  /* ── RESULTS AREA ── */
+  .results-area { display: flex; flex-direction: column; }
+
   .results-header {
-    padding: 16px 20px;
+    padding: 13px 18px;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); border: 1px solid var(--border);
+    flex-wrap: wrap; gap: 8px;
   }
-  .results-stats {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
+  .results-stats { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
   .results-stats span { color: var(--gold); }
-  .results-actions { display: flex; gap: 8px; }
-  .action-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .action-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .action-btn.primary { border-color: var(--gold); color: var(--gold); }
+  .results-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  .scenes-container {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: none;
-    overflow-y: auto;
-    max-height: calc(100vh - 200px);
+  .abtn {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .abtn:hover, .abtn.pri { border-color: var(--gold); color: var(--gold); }
+  .abtn.danger { border-color: rgba(248,113,113,.4); color: var(--red); }
+  .abtn.danger:hover { border-color: var(--red); }
+  .abtn.success { border-color: rgba(74,222,128,.4); color: var(--green); }
+  .abtn.success:hover { border-color: var(--green); }
+
+  /* ── SCENES WRAPPER ── */
+  .scenes-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: none; overflow-y: auto; max-height: calc(100vh - 180px);
   }
   .scene-block { border-bottom: 1px solid var(--border); }
-  .scene-header {
-    padding: 14px 20px;
-    background: var(--surface2);
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    cursor: pointer;
-    transition: background 0.15s;
+  .scene-hdr {
+    padding: 12px 16px; background: var(--surface2);
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer; transition: background .15s;
   }
-  .scene-header:hover { background: #1f1f1f; }
-  .scene-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    color: var(--gold-dim);
-    line-height: 1;
-    min-width: 32px;
-  }
-  .scene-text {
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--text);
-    flex: 1;
-  }
-  .scene-meta {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-shrink: 0;
-  }
-  .scene-count {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
-  .scene-block.open .chevron { transform: rotate(90deg); }
+  .scene-hdr:hover { background: #1f1f1f; }
+  .scene-num  { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold-dim); line-height: 1; min-width: 26px; }
+  .scene-txt  { font-size: 11px; line-height: 1.6; flex: 1; }
+  .scene-cnt  { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .chev { color: var(--muted); font-size: 11px; transition: transform .2s; }
+  .scene-block.open .chev { transform: rotate(90deg); }
 
+  /* ── MEDIA GRID ── */
   .media-grid {
-    display: none;
-    padding: 16px 20px;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 10px;
-    background: var(--bg);
+    display: none; padding: 12px 14px;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 8px; background: var(--bg);
   }
   .scene-block.open .media-grid { display: grid; }
 
-  .media-card {
-    position: relative;
-    aspect-ratio: 16/10;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    transition: all 0.15s;
+  /* ── MEDIA CARD ── */
+  .mc {
+    position: relative; aspect-ratio: 16/10;
+    background: var(--surface2); border: 2px solid var(--border);
+    overflow: hidden; cursor: pointer; transition: all .15s; user-select: none;
   }
-  .media-card:hover { border-color: var(--gold); transform: scale(1.02); }
-  .media-card .thumb {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .media-card .thumb.loaded { opacity: 1; }
+  .mc:hover { border-color: var(--gold); transform: scale(1.02); }
+  .mc.selected { border-color: var(--green) !important; box-shadow: 0 0 0 1px var(--green); }
+  .mc img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .3s; }
+  .mc img.ld { opacity: 1; }
 
-  .media-card-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 8px;
+  .mc-ov {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.78) 0%, transparent 52%);
+    opacity: 0; transition: opacity .2s;
+    display: flex; align-items: flex-end; flex-wrap: wrap;
+    padding: 5px; gap: 3px;
   }
-  .media-card:hover .media-card-overlay { opacity: 1; }
+  .mc:hover .mc-ov, .mc.selected .mc-ov { opacity: 1; }
 
-  .overlay-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 6px;
-    align-items: flex-start;
+  .mc-sel-check {
+    position: absolute; top: 5px; right: 5px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,0,0,.5); border: 1.5px solid var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: transparent; transition: all .15s;
   }
-  .overlay-bottom {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .mc.selected .mc-sel-check { background: var(--green); border-color: var(--green); color: #000; }
 
-  .media-type-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 1px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
+  .mc-dl-btn {
+    position: absolute; top: 5px; left: 5px;
+    background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.15);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 9px;
+    padding: 2px 6px; cursor: pointer; opacity: 0; transition: opacity .15s;
+    letter-spacing: .5px; text-transform: uppercase;
   }
-  .pill-video { background: rgba(201,168,76,0.9); color: #000; }
-  .pill-photo { background: rgba(100,100,100,0.9); color: #fff; }
-  .pill-coverr { background: rgba(124,58,237,0.9); color: #fff; }
-  .pill-openverse { background: rgba(14,165,233,0.9); color: #fff; }
-  .pill-pexels { background: rgba(5,160,129,0.9); color: #fff; }
+  .mc:hover .mc-dl-btn { opacity: 1; }
 
-  .card-btn {
-    border: 1px solid rgba(255,255,255,0.18);
-    background: rgba(0,0,0,0.35);
-    color: #fff;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 5px 8px;
-    cursor: pointer;
+  .pill {
+    font-family: 'DM Mono', monospace; font-size: 8px;
+    padding: 2px 5px; border-radius: 1px; text-transform: uppercase;
+    letter-spacing: .5px; font-weight: 500;
   }
-  .card-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .p-vid  { background: rgba(201,168,76,.9); color: #000; }
+  .p-ph   { background: rgba(100,100,100,.9); color: #fff; }
+  .p-ia   { background: rgba(201,168,76,.85); color: #000; }
+  .p-op   { background: rgba(14,165,233,.9);  color: #fff; }
+  .p-cov  { background: rgba(124,58,237,.9);  color: #fff; }
+  .p-wtv  { background: rgba(239,68,68,.9);   color: #fff; }
+  .p-dp   { background: rgba(139,92,246,.9);  color: #fff; }
+  .p-pex  { background: rgba(5,160,129,.9);   color: #fff; }
+  .mc-ph  { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
 
-  .media-card-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    font-size: 24px;
+  /* ── SCENE BULK BAR ── */
+  .scene-bulk-bar {
+    display: none; padding: 7px 14px;
+    background: var(--surface2); border-top: 1px solid var(--border);
+    gap: 6px; align-items: center; flex-wrap: wrap;
   }
+  .scene-block.open .scene-bulk-bar { display: flex; }
+  .bulk-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); flex: 1; }
+  .bulk-lbl span { color: var(--gold); }
 
-  .results-empty {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 40px;
-    gap: 16px;
-    text-align: center;
+  /* ── EMPTY STATE ── */
+  .empty {
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 70px 30px; gap: 14px; text-align: center;
   }
-  .empty-icon { font-size: 40px; opacity: 0.3; }
-  .empty-text { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .empty-icon { font-size: 32px; opacity: .2; }
+  .empty-txt  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; }
 
-  .modal-bg {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
+  /* ── GLOBAL SELECTION BAR ── */
+  .global-sel-bar {
     display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 10;
+    background: #1a1a0a; border: 1px solid rgba(201,168,76,.3);
+    border-top: none; padding: 8px 16px;
+    align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .global-sel-bar.vis { display: flex; }
+  .gsl-lbl { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); flex: 1; }
+
+  /* ── DOWNLOAD QUEUE MODAL ── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.88);
+    display: none; align-items: center; justify-content: center; z-index: 200;
   }
   .modal-bg.open { display: flex; }
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    width: 600px;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
+    background: var(--surface); border: 1px solid var(--border);
+    width: 640px; max-height: 82vh; display: flex; flex-direction: column;
   }
-  .modal-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .modal-hdr {
+    padding: 17px 22px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--gold); }
-  .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--gold); }
+  .modal-close { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
   .modal-close:hover { color: var(--text); }
-  .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
   .modal-body pre {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    line-height: 1.7;
-    color: var(--green);
-    background: var(--bg);
-    padding: 16px;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
+    font-family: 'DM Mono', monospace; font-size: 10px; line-height: 1.7;
+    color: var(--green); background: var(--bg); padding: 14px;
+    overflow-x: auto; white-space: pre-wrap; word-break: break-all;
     border: 1px solid var(--border);
   }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
-  .modal-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 10px 20px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.15s;
+  .modal-ftr {
+    padding: 13px 20px; border-top: 1px solid var(--border);
+    display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
   }
-  .modal-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .modal-btn.primary { background: var(--gold); color: #000; border-color: var(--gold); }
-  .modal-btn.primary:hover { background: #dbb85a; }
+  .mbtn {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px;
+    padding: 8px 16px; border: 1px solid var(--border); background: transparent;
+    color: var(--text); cursor: pointer; text-transform: uppercase; transition: all .15s;
+  }
+  .mbtn:hover { border-color: var(--gold); color: var(--gold); }
+  .mbtn.pri { background: var(--gold); color: #000; border-color: var(--gold); }
+  .mbtn.pri:hover { background: #dbb85a; }
+  .mbtn.g { background: rgba(74,222,128,.15); color: var(--green); border-color: rgba(74,222,128,.3); }
+  .mbtn.g:hover { background: rgba(74,222,128,.25); }
 
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  /* ── DOWNLOAD QUEUE LIST ── */
+  .dl-queue { display: flex; flex-direction: column; gap: 6px; }
+  .dl-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; background: var(--bg); border: 1px solid var(--border);
+  }
+  .dl-thumb { width: 48px; height: 30px; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+  .dl-info { flex: 1; min-width: 0; }
+  .dl-title { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dl-meta  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .dl-status { font-family: 'DM Mono', monospace; font-size: 9px; white-space: nowrap; }
+  .dl-status.pending  { color: var(--muted); }
+  .dl-status.fetching { color: var(--gold); }
+  .dl-status.done     { color: var(--green); }
+  .dl-status.error    { color: var(--red); }
+  .dl-btn {
+    font-family: 'DM Mono', monospace; font-size: 9px; padding: 4px 8px;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    cursor: pointer; transition: all .15s; text-decoration: none; white-space: nowrap;
+  }
+  .dl-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); }
   ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
 
-  .notice {
-    margin: 20px;
-    padding: 12px 16px;
-    background: rgba(201,168,76,0.07);
-    border: 1px solid rgba(201,168,76,0.2);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gold-dim);
-    line-height: 1.6;
+  /* ── KEY INPUT ROW ── */
+  .key-row { position: relative; display: flex; }
+  .key-row input { flex: 1; padding-right: 70px; }
+  .key-eye {
+    position: absolute; right: 38px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 10px; padding: 0 6px;
+    transition: color .15s;
   }
-  .notice strong { color: var(--gold); }
+  .key-eye:hover { color: var(--text); }
+  .key-save {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    background: rgba(201,168,76,.12); border: none; border-left: 1px solid var(--border);
+    color: var(--gold-dim); font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase; padding: 0 10px;
+    cursor: pointer; transition: all .15s; white-space: nowrap;
+  }
+  .key-save:hover { background: rgba(201,168,76,.22); color: var(--gold); }
+  .key-save.saved { color: var(--green); background: rgba(74,222,128,.1); }
+  .key-status {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    margin-top: 4px; display: flex; align-items: center; gap: 5px;
+  }
+  .ks-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .ks-dot.set   { background: var(--green); }
+  .ks-dot.unset { background: var(--border); }
+  .ks-txt { color: var(--muted); }
+  .ks-txt.set { color: #5a8a5a; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .pulsing { animation: pulse 1.5s infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin .8s linear infinite; display: inline-block; }
 </style>
 </head>
 <body>
 
+<!-- ══ HEADER ══ -->
 <div class="header">
   <div>
-    <div class="header-title">FOOTAGE SCRAPER</div>
-    <div class="header-sub">Faceless YT · Context-Aware · CC0 Sources</div>
+    <div class="header-title">FOOTAGE SCRAPER PRO</div>
+    <div class="header-sub">True Crime Edition · Claude AI · 6 Sources · Download Manager</div>
   </div>
   <div class="source-badges">
-    <span class="badge badge-coverr">Coverr</span>
-    <span class="badge badge-openverse">Openverse</span>
-    <span class="badge badge-pexels">Pexels</span>
-    <span class="badge badge-cc0">CC0 Safe</span>
+    <span class="badge b-claude">Claude AI</span>
+    <span class="badge b-tc">True Crime</span>
+    <span class="badge b-archive">Archive.org</span>
+    <span class="badge b-cc0">CC0 Safe</span>
   </div>
 </div>
 
+<!-- ══ MAIN ══ -->
 <div class="main">
-  <div style="display:flex;flex-direction:column;gap:16px;">
+
+  <!-- LEFT COL -->
+  <div class="left-col">
+
+    <!-- 01 Script -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-num">01</span>
-        <span class="panel-header-label">Your Script</span>
+        <span class="panel-label">Your Script</span>
       </div>
-      <div class="script-wrap">
-        <textarea id="scriptInput" placeholder="Paste your full faceless YouTube script here. Each sentence will be analyzed by GPT-4o Mini to find contextually relevant footage..."></textarea>
+      <div class="pw">
+        <textarea id="scriptInput" placeholder="Paste your true crime YouTube script here. Claude AI will analyze each sentence and find contextually relevant footage from 6 different sources..."></textarea>
       </div>
     </div>
 
+    <!-- 02 API Keys -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-num">02</span>
-        <span class="panel-header-label">API Keys</span>
+        <span class="panel-label">API Keys</span>
       </div>
       <div class="keys-wrap">
+
+        <!-- Anthropic / Claude -->
         <div class="field-group">
           <div class="field-label">
-            <span class="src-dot dot-openrouter"></span>
-            OpenRouter API Key <span class="req">*REQUIRED</span>
+            <span class="src-dot" style="background:var(--gold)"></span>
+            Anthropic API Key <span class="req">* required</span>
           </div>
-          <input type="password" id="openrouterKey" placeholder="sk-or-v1-...">
-          <div class="field-hint">Get yours at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai → Keys</a></div>
+          <div class="key-row">
+            <input type="password" id="anthropicKey" placeholder="sk-ant-api03-..." autocomplete="off">
+            <button class="key-eye" onclick="toggleEye('anthropicKey',this)">show</button>
+            <button class="key-save" id="save-anthropic" onclick="saveKey('anthropic')">Save</button>
+          </div>
+          <div class="key-status" id="ks-anthropic">
+            <div class="ks-dot unset" id="ksd-anthropic"></div>
+            <span class="ks-txt" id="kst-anthropic">Not set — needed for Claude AI keyword analysis</span>
+          </div>
+          <div class="field-hint">Get yours at <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com → API Keys</a></div>
         </div>
-        <div class="field-group">
+
+        <!-- Pexels -->
+        <div class="field-group" id="pexels-key-wrap">
           <div class="field-label">
-            <span class="src-dot" style="background:var(--pexels)"></span>
-            Pexels API Key <span style="color:#444;font-weight:300">(optional)</span>
+            <span class="src-dot" style="background:#05a081"></span>
+            Pexels API Key <span style="color:#444;font-size:9px">(only if Pexels source enabled)</span>
           </div>
-          <input type="password" id="pexelsKey" placeholder="Only needed if Pexels source is enabled">
+          <div class="key-row">
+            <input type="password" id="pexelsKey" placeholder="Pexels API key..." autocomplete="off">
+            <button class="key-eye" onclick="toggleEye('pexelsKey',this)">show</button>
+            <button class="key-save" id="save-pexels" onclick="saveKey('pexels')">Save</button>
+          </div>
+          <div class="key-status" id="ks-pexels">
+            <div class="ks-dot unset" id="ksd-pexels"></div>
+            <span class="ks-txt" id="kst-pexels">Not set</span>
+          </div>
           <div class="field-hint">Free at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a></div>
         </div>
+
+        <!-- Pixabay -->
+        <div class="field-group">
+          <div class="field-label">
+            <span class="src-dot" style="background:#8b5cf6"></span>
+            Pixabay API Key <span style="color:#444;font-size:9px">(optional — improves Pixabay results)</span>
+          </div>
+          <div class="key-row">
+            <input type="password" id="pixabayKey" placeholder="Pixabay API key..." autocomplete="off">
+            <button class="key-eye" onclick="toggleEye('pixabayKey',this)">show</button>
+            <button class="key-save" id="save-pixabay" onclick="saveKey('pixabay')">Save</button>
+          </div>
+          <div class="key-status" id="ks-pixabay">
+            <div class="ks-dot unset" id="ksd-pixabay"></div>
+            <span class="ks-txt" id="kst-pixabay">Not set — using public tier (limited)</span>
+          </div>
+          <div class="field-hint">Free at <a href="https://pixabay.com/api/docs/" target="_blank">pixabay.com/api/docs</a></div>
+        </div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#3a3a3a;line-height:1.6;padding:8px 10px;border:1px solid var(--border);background:var(--bg)">
+          Keys are saved to <strong style="color:#555">localStorage</strong> in your browser only — never sent anywhere except the respective API endpoints.
+          <button onclick="clearAllKeys()" style="display:block;margin-top:6px;background:none;border:1px solid #333;color:#555;font-family:'DM Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;text-transform:uppercase" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='#333';this.style.color='#555'">Clear All Saved Keys</button>
+        </div>
+
       </div>
     </div>
 
+    <!-- 03 Sources & Options -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-num">03</span>
-        <span class="panel-header-label">Options</span>
+        <span class="panel-label">Sources &amp; Options</span>
       </div>
-      <div class="opts-wrap">
+      <div class="opts">
+
         <div class="notice">
-          <strong>No Pexels/Pixabay?</strong> Coverr and Openverse are 100% CC0 — safe for commercial YouTube use with zero Content ID risk. Pexels is optional if you need extra volume.
+          <strong>True Crime Sources:</strong> Internet Archive has real news clips, court footage &amp; historical material. WikimediaTV has documentary/news video. Openverse &amp; Coverr fill CC0 B-roll. Pexels optional.
+          <span class="tc-tip">⚠ Always verify licensing before monetizing. Archive clips may require attribution.</span>
+        </div>
+
+        <div>
+          <div class="src-section-label">Free / Open (no key needed)</div>
+          <div class="src-grid3">
+            <div class="src-t on-ia"  id="t-ia"  onclick="togSrc('ia')">
+              <div class="sn" style="color:#c9a84c">Archive</div>
+              <div class="ss">News · Court · Docs</div>
+            </div>
+            <div class="src-t on-op"  id="t-op"  onclick="togSrc('op')">
+              <div class="sn" style="color:#7dd3fc">Openverse</div>
+              <div class="ss">CC Photos · Video</div>
+            </div>
+            <div class="src-t on-cov" id="t-cov" onclick="togSrc('cov')">
+              <div class="sn" style="color:#a78bfa">Coverr</div>
+              <div class="ss">B-roll · CC0</div>
+            </div>
+            <div class="src-t on-wtv" id="t-wtv" onclick="togSrc('wtv')">
+              <div class="sn" style="color:#fca5a5">WikiTV</div>
+              <div class="ss">Wikimedia Video</div>
+            </div>
+            <div class="src-t on-dp"  id="t-dp"  onclick="togSrc('dp')">
+              <div class="sn" style="color:#c4b5fd">Pixabay</div>
+              <div class="ss">CC0 Video+Photo</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="src-section-label">Requires API Key</div>
+          <div class="src-grid2">
+            <div class="src-t" id="t-pex" onclick="togSrc('pex')">
+              <div class="sn" style="color:var(--muted)">Pexels</div>
+              <div class="ss">Video + Photo</div>
+            </div>
+          </div>
         </div>
 
         <div class="opts-row">
-          <div class="opt-item">
-            <div class="opt-label">Results / Sentence</div>
-            <input type="number" id="resultsPerSentence" value="10" min="1" max="30">
+          <div>
+            <div class="opt-label">Results / Scene</div>
+            <input type="number" id="rps" value="8" min="1" max="30">
           </div>
-          <div class="opt-item">
+          <div>
             <div class="opt-label">Min Sentence Length</div>
-            <input type="number" id="minLength" value="30" min="10" max="200">
-          </div>
-        </div>
-
-        <div class="opts-row">
-          <div class="opt-item">
-            <div class="opt-label">Batch Size</div>
-            <input type="number" id="batchSize" value="5" min="1" max="20">
-          </div>
-          <div class="opt-item">
-            <div class="opt-label">AI Model</div>
-            <select id="aiModel">
-              <option value="openai/gpt-4o-mini">GPT-4o Mini (cheapest)</option>
-              <option value="openai/gpt-4o">GPT-4o</option>
-              <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
-              <option value="anthropic/claude-sonnet-4-5">Claude Sonnet</option>
-              <option value="google/gemini-flash-1.5">Gemini Flash 1.5</option>
-            </select>
+            <input type="number" id="minLen" value="25" min="10" max="200">
           </div>
         </div>
 
         <div>
-          <div class="opt-label" style="margin-bottom:8px">Media Sources</div>
-          <div class="source-toggles">
-            <div class="src-toggle active-coverr" id="toggleCoverr" onclick="toggleSource('coverr')">
-              <div class="src-toggle-name" style="color:#a78bfa">Coverr</div>
-              <div class="src-toggle-note">Video only · CC0</div>
-            </div>
-            <div class="src-toggle active-openverse" id="toggleOpenverse" onclick="toggleSource('openverse')">
-              <div class="src-toggle-name" style="color:#7dd3fc">Openverse</div>
-              <div class="src-toggle-note">Photo + Audio · CC</div>
-            </div>
-            <div class="src-toggle" id="togglePexels" onclick="toggleSource('pexels')">
-              <div class="src-toggle-name" style="color:var(--muted)">Pexels</div>
-              <div class="src-toggle-note">Video + Photo · Free</div>
-            </div>
-          </div>
+          <div class="opt-label">Claude Model</div>
+          <select id="model">
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest / cheapest)</option>
+            <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5 (best quality)</option>
+          </select>
         </div>
 
-        <div>
-          <div class="opt-label" style="margin-bottom:8px">Media Type</div>
-          <div class="media-toggles">
-            <div class="med-toggle active" id="togVideo" onclick="toggleMedia('video')">▶ Video</div>
-            <div class="med-toggle active" id="togPhoto" onclick="toggleMedia('photo')">⬛ Photo</div>
-          </div>
-        </div>
       </div>
     </div>
 
-    <button class="run-btn" id="runBtn" onclick="runScraper()">ANALYSE SCRIPT & FIND FOOTAGE</button>
-    <div class="status-bar" id="statusBar"></div>
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      <div class="progress-label" id="progressLabel">Initializing...</div>
+    <button class="run-btn" id="runBtn" onclick="run()">ANALYSE SCRIPT &amp; FIND FOOTAGE</button>
+    <div class="status" id="status"></div>
+    <div class="prog-wrap" id="progWrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="prog-lbl" id="progLbl">Initializing...</div>
+    </div>
+
+  </div><!-- /left-col -->
+
+  <!-- RIGHT: RESULTS -->
+  <div class="results-area" id="resArea">
+    <div class="empty" id="emptyState">
+      <div class="empty-icon">◈</div>
+      <div class="empty-txt">
+        Paste your true crime script and hit the button.<br><br>
+        Claude AI analyzes each sentence and finds relevant<br>
+        news clips, court footage, archive material &amp; B-roll<br>
+        from Internet Archive, Openverse, Wikimedia &amp; more.<br><br>
+        Select clips &amp; download them directly from the app.
+      </div>
     </div>
   </div>
 
-  <div class="results-area" id="resultsArea">
-    <div class="results-empty" id="resultsEmpty">
-      <div class="empty-icon">◈</div>
-      <div class="empty-text">
-        Paste your script, configure your sources,<br>and hit the button.<br><br>
-        Each sentence gets analyzed by AI and matched<br>to contextually relevant CC0 footage.
-      </div>
+</div><!-- /main -->
+
+<!-- ══ EXPORT MODAL ══ -->
+<div class="modal-bg" id="exportModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">EXPORT RESULTS</div>
+      <button class="modal-close" onclick="closeModal('exportModal')">✕</button>
+    </div>
+    <div class="modal-body"><pre id="exportData"></pre></div>
+    <div class="modal-ftr">
+      <button class="mbtn" onclick="closeModal('exportModal')">Close</button>
+      <button class="mbtn pri" onclick="copyExp()">Copy</button>
+      <button class="mbtn pri" onclick="dlExp()">Download</button>
     </div>
   </div>
 </div>
 
-<div class="modal-bg" id="exportModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">EXPORT RESULTS</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<!-- ══ DOWNLOAD QUEUE MODAL ══ -->
+<div class="modal-bg" id="dlModal">
+  <div class="modal" style="width:700px">
+    <div class="modal-hdr">
+      <div class="modal-title">DOWNLOAD QUEUE</div>
+      <button class="modal-close" onclick="closeModal('dlModal')">✕</button>
     </div>
     <div class="modal-body">
-      <pre id="exportData"></pre>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+        Direct browser download attempts each file. If a download is blocked by CORS, use the <strong style="color:var(--gold)">Open</strong> link to save manually from the source site.
+      </div>
+      <div class="dl-queue" id="dlQueue"></div>
     </div>
-    <div class="modal-footer">
-      <button class="modal-btn" onclick="closeModal()">Close</button>
-      <button class="modal-btn primary" onclick="copyExport()">Copy JSON</button>
-      <button class="modal-btn primary" onclick="downloadExport()">Download</button>
+    <div class="modal-ftr">
+      <button class="mbtn" onclick="closeModal('dlModal')">Close</button>
+      <button class="mbtn g" id="dlAllBtn" onclick="downloadAllQueued()">⬇ Download All</button>
     </div>
   </div>
 </div>
 
 <script>
-const sources = { coverr: true, openverse: true, pexels: false };
-const mediaTypes = { video: true, photo: true };
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const srcs = { ia:true, op:true, cov:true, wtv:true, dp:true, pex:false };
+const srcColors = { ia:'#c9a84c', op:'#7dd3fc', cov:'#a78bfa', wtv:'#fca5a5', dp:'#c4b5fd', pex:'#6ee7b7' };
 let allResults = [];
+let selectedItems = new Set();
 let isRunning = false;
-let exportMode = 'json';
 
-function toggleSource(src) {
-  sources[src] = !sources[src];
-  const el = document.getElementById('toggle' + src.charAt(0).toUpperCase() + src.slice(1));
-  if (sources[src]) {
-    el.className = `src-toggle active-${src}`;
+/* ══════════════════════════════════════════
+   KEY MANAGEMENT (localStorage)
+══════════════════════════════════════════ */
+const KEY_MAP = {
+  anthropic: { label: 'Anthropic', field: 'anthropicKey' },
+  pexels:    { label: 'Pexels',    field: 'pexelsKey'    },
+  pixabay:   { label: 'Pixabay',   field: 'pixabayKey'   }
+};
+
+function getKey(name) {
+  return localStorage.getItem(`fs_key_${name}`) || '';
+}
+
+function saveKey(name) {
+  const field = document.getElementById(KEY_MAP[name].field);
+  const val = field.value.trim();
+  if (!val) { flashSaveBtn(name, 'empty'); return; }
+  localStorage.setItem(`fs_key_${name}`, val);
+  updateKeyStatus(name, true);
+  flashSaveBtn(name, 'saved');
+}
+
+function clearAllKeys() {
+  if (!confirm('Clear all saved API keys from this browser?')) return;
+  ['anthropic','pexels','pixabay'].forEach(n => {
+    localStorage.removeItem(`fs_key_${n}`);
+    const field = document.getElementById(KEY_MAP[n].field);
+    if (field) field.value = '';
+    updateKeyStatus(n, false);
+  });
+}
+
+function updateKeyStatus(name, isSet) {
+  const dot = document.getElementById(`ksd-${name}`);
+  const txt = document.getElementById(`kst-${name}`);
+  if (!dot || !txt) return;
+  dot.className = `ks-dot ${isSet ? 'set' : 'unset'}`;
+  txt.className = `ks-txt ${isSet ? 'set' : ''}`;
+  const msgs = {
+    anthropic: isSet ? 'Key saved ✓ — Claude AI ready' : 'Not set — needed for Claude AI keyword analysis',
+    pexels:    isSet ? 'Key saved ✓' : 'Not set',
+    pixabay:   isSet ? 'Key saved ✓ — full Pixabay access' : 'Not set — using public tier (limited)'
+  };
+  txt.textContent = msgs[name];
+}
+
+function flashSaveBtn(name, state) {
+  const btn = document.getElementById(`save-${name}`);
+  if (!btn) return;
+  if (state === 'saved') {
+    btn.textContent = 'Saved ✓'; btn.className = 'key-save saved';
+    setTimeout(() => { btn.textContent = 'Save'; btn.className = 'key-save'; }, 2000);
   } else {
-    el.className = 'src-toggle';
-    el.querySelector('.src-toggle-name').style.color = 'var(--muted)';
+    btn.textContent = 'Empty!';
+    setTimeout(() => { btn.textContent = 'Save'; }, 1500);
   }
-  if (src === 'coverr') el.querySelector('.src-toggle-name').style.color = sources[src] ? '#a78bfa' : 'var(--muted)';
-  if (src === 'openverse') el.querySelector('.src-toggle-name').style.color = sources[src] ? '#7dd3fc' : 'var(--muted)';
-  if (src === 'pexels') el.querySelector('.src-toggle-name').style.color = sources[src] ? '#6ee7b7' : 'var(--muted)';
 }
 
-function toggleMedia(type) {
-  mediaTypes[type] = !mediaTypes[type];
-  document.getElementById('tog' + type.charAt(0).toUpperCase() + type.slice(1)).classList.toggle('active', mediaTypes[type]);
+function toggleEye(fieldId, btn) {
+  const field = document.getElementById(fieldId);
+  if (field.type === 'password') { field.type = 'text'; btn.textContent = 'hide'; }
+  else { field.type = 'password'; btn.textContent = 'show'; }
 }
 
-function parseSentences(script, minLen) {
-  return script.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length >= minLen);
+function loadSavedKeys() {
+  ['anthropic','pexels','pixabay'].forEach(name => {
+    const val = getKey(name);
+    if (val) {
+      const field = document.getElementById(KEY_MAP[name].field);
+      if (field) field.value = val;
+      updateKeyStatus(name, true);
+    }
+  });
 }
 
-async function getKeywordsForBatch(sentences, apiKey, model) {
-  const prompt = `You are a stock footage search expert for YouTube documentary/faceless channels.
-For each sentence below, generate 2-4 short search keywords (2-5 words each) that would find relevant stock footage or photos.
-Focus on VISUAL concepts — what would you actually see on screen.
-Return ONLY valid JSON: {"results": [{"sentence": "...", "keywords": ["kw1", "kw2", "kw3"]}, ...]}
+// Load keys on startup
+window.addEventListener('DOMContentLoaded', loadSavedKeys);
+
+/* ══════════════════════════════════════════
+   SOURCE TOGGLES
+══════════════════════════════════════════ */
+function togSrc(s) {
+  srcs[s] = !srcs[s];
+  const el = document.getElementById('t-' + s);
+  el.className = srcs[s] ? `src-t on-${s}` : 'src-t';
+  el.querySelector('.sn').style.color = srcs[s] ? srcColors[s] : 'var(--muted)';
+  if (s === 'pex') document.getElementById('pexels-key-wrap').style.display = srcs[s] ? 'block' : 'none';
+}
+
+/* ══════════════════════════════════════════
+   STATUS / PROGRESS
+══════════════════════════════════════════ */
+function setSt(msg, state = 'run') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = `status vis ${state}`;
+}
+function setProg(p, lbl) {
+  document.getElementById('progWrap').className = 'prog-wrap vis';
+  document.getElementById('progFill').style.width = p + '%';
+  document.getElementById('progLbl').textContent = lbl;
+}
+
+/* ══════════════════════════════════════════
+   PARSE SCRIPT
+══════════════════════════════════════════ */
+function parseSentences(txt, minL) {
+  return txt.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length >= minL);
+}
+
+/* ══════════════════════════════════════════
+   CLAUDE AI — GET KEYWORDS
+══════════════════════════════════════════ */
+async function getKeywords(sentences, model) {
+  const anthropicKey = getKey('anthropic');
+  if (!anthropicKey) throw new Error('Anthropic API key not set. Add it in the API Keys panel.');
+  const prompt = `You are a stock footage search expert for true crime YouTube channels.
+For each sentence, generate 2-4 short search queries (2-5 words each) to find relevant footage, news clips, court imagery, or crime scene photos.
+Focus on VISUAL concepts. For true crime think: courtrooms, police tape, news anchors, city skylines, surveillance footage, detective work, newspapers, crime scene tape, etc.
+Return ONLY valid JSON, no markdown fences: {"results":[{"sentence":"...","keywords":["kw1","kw2","kw3"]},...]}
 
 Sentences:
-${sentences.map((s, i) => `${i+1}. ${s}`).join('\n')}`;
+${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`;
 
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://footage-scraper.app',
-      'X-Title': 'Footage Scraper'
-    },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      max_tokens: 1000
+      max_tokens: 1200,
+      messages: [{ role: 'user', content: prompt }]
     })
   });
-
-  if (!resp.ok) throw new Error(`OpenRouter error: ${resp.status} ${resp.statusText}`);
+  if (!resp.ok) throw new Error(`Claude API: ${resp.status} ${resp.statusText}`);
   const data = await resp.json();
-  const text = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+  const text = data.content.map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
   return JSON.parse(text).results;
 }
 
-async function fetchCoverr(keyword, limit) {
+/* ══════════════════════════════════════════
+   FETCH: INTERNET ARCHIVE
+══════════════════════════════════════════ */
+async function fetchInternetArchive(kw, limit) {
   try {
-    const query = encodeURIComponent(keyword);
-    const resp = await fetch(`https://coverr.co/api/videos?keywords=${query}&per_page=${limit}`);
+    const q = encodeURIComponent(`${kw} crime OR court OR news OR police OR investigation`);
+    const resp = await fetch(
+      `https://archive.org/advancedsearch.php?q=${q}&fl[]=identifier,title,mediatype&rows=${limit}&output=json&mediatype=movies`
+    );
     if (!resp.ok) return [];
     const data = await resp.json();
-    return (data.hits || []).map(v => ({
-      source: 'coverr',
-      type: 'video',
-      id: v.id,
-      title: v.title || keyword,
-      thumbnail: v.urls?.mp4_preview || v.cover_url || '',
-      url: v.url,
-      downloadUrl: v.urls?.mp4_download || v.mp4_url || v.url,
-      previewUrl: v.urls?.mp4_preview || v.cover_url || '',
-      keyword
+    return (data.response?.docs || []).map(d => ({
+      source: 'archive', type: 'video', id: d.identifier,
+      title: d.title || kw,
+      thumbnail: `https://archive.org/services/img/${d.identifier}`,
+      url: `https://archive.org/details/${d.identifier}`,
+      downloadUrl: `https://archive.org/download/${d.identifier}`,
+      keyword: kw
     }));
   } catch { return []; }
 }
 
-async function fetchOpenverse(keyword, limit, includeVideo, includePhoto) {
+/* ══════════════════════════════════════════
+   FETCH: OPENVERSE
+══════════════════════════════════════════ */
+async function fetchOpenverse(kw, limit) {
   try {
     const results = [];
-    const types = [];
-    if (includePhoto) types.push('image');
-    if (includeVideo) types.push('video');
-
-    for (const mediaType of types) {
-      const query = encodeURIComponent(keyword);
-      const resp = await fetch(`https://api.openverse.org/v1/${mediaType}s/?q=${query}&page_size=${Math.ceil(limit/types.length)}&license_type=commercial,modification`);
+    for (const mt of ['image', 'video']) {
+      const resp = await fetch(
+        `https://api.openverse.org/v1/${mt}s/?q=${encodeURIComponent(kw)}&page_size=${Math.ceil(limit / 2)}&license_type=commercial,modification`
+      );
       if (!resp.ok) continue;
       const data = await resp.json();
-      const items = (data.results || []).map(item => ({
-        source: 'openverse',
-        type: mediaType === 'image' ? 'photo' : 'video',
-        id: item.id,
-        title: item.title || keyword,
+      (data.results || []).forEach(item => results.push({
+        source: 'openverse', type: mt === 'image' ? 'photo' : 'video', id: item.id,
+        title: item.title || kw,
         thumbnail: item.thumbnail || item.url,
         url: item.foreign_landing_url || item.url,
         downloadUrl: item.url,
-        previewUrl: item.thumbnail || item.url,
-        license: item.license,
-        keyword
+        license: item.license, keyword: kw
       }));
-      results.push(...items);
     }
     return results;
   } catch { return []; }
 }
 
-async function fetchPexels(keyword, limit, pexelsKey, includeVideo, includePhoto) {
-  const results = [];
-  const query = encodeURIComponent(keyword);
-
+/* ══════════════════════════════════════════
+   FETCH: COVERR
+══════════════════════════════════════════ */
+async function fetchCoverr(kw, limit) {
   try {
-    if (includeVideo) {
-      const resp = await fetch(`https://api.pexels.com/videos/search?query=${query}&per_page=${Math.ceil(limit/2)}`, { headers: { Authorization: pexelsKey } });
-      if (resp.ok) {
-        const data = await resp.json();
-        const items = (data.videos || []).map(v => ({
-          source: 'pexels',
-          type: 'video',
-          id: v.id,
-          title: `${keyword} video`,
-          thumbnail: v.image,
-          url: `https://www.pexels.com/video/${v.id}/`,
-          downloadUrl: (v.video_files.find(f => f.quality === 'hd') || v.video_files[0])?.link || '',
-          previewUrl: v.image,
-          keyword
-        }));
-        results.push(...items);
-      }
+    const resp = await fetch(`https://coverr.co/api/videos?keywords=${encodeURIComponent(kw)}&per_page=${limit}`);
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    return (data.hits || []).map(v => ({
+      source: 'coverr', type: 'video', id: v.id,
+      title: v.title || kw,
+      thumbnail: v.cover_url || '',
+      url: v.url, downloadUrl: v.mp4_url || v.url, keyword: kw
+    }));
+  } catch { return []; }
+}
+
+/* ══════════════════════════════════════════
+   FETCH: WIKIMEDIA VIDEO
+══════════════════════════════════════════ */
+async function fetchWikimediaVideo(kw, limit) {
+  try {
+    const resp = await fetch(
+      `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(kw)}&srnamespace=6&srlimit=${limit}&format=json&origin=*`
+    );
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    const items = (data.query?.search || []).filter(r =>
+      /\.(webm|ogv|mp4)/i.test(r.title)
+    );
+    return items.map(r => {
+      const fname = r.title.replace('File:', '');
+      return {
+        source: 'wikimedia', type: 'video', id: r.pageid,
+        title: fname,
+        thumbnail: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fname)}?width=300`,
+        url: `https://commons.wikimedia.org/wiki/${encodeURIComponent(r.title)}`,
+        downloadUrl: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fname)}`,
+        keyword: kw
+      };
+    });
+  } catch { return []; }
+}
+
+/* ══════════════════════════════════════════
+   FETCH: PIXABAY (CC0)
+══════════════════════════════════════════ */
+async function fetchPixabay(kw, limit) {
+  try {
+    const pixKey = getKey('pixabay') || 'public';
+    const results = [];
+    const vR = await fetch(`https://pixabay.com/api/videos/?key=${pixKey}&q=${encodeURIComponent(kw)}&per_page=${Math.ceil(limit / 2)}`);
+    if (vR.ok) {
+      const d = await vR.json();
+      (d.hits || []).forEach(v => results.push({
+        source: 'pixabay', type: 'video', id: v.id,
+        title: kw + ' video',
+        thumbnail: v.videos?.tiny?.thumbnail || '',
+        url: `https://pixabay.com/videos/id-${v.id}/`,
+        downloadUrl: v.videos?.medium?.url || '',
+        keyword: kw
+      }));
     }
-    if (includePhoto) {
-      const resp = await fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=${Math.ceil(limit/2)}`, { headers: { Authorization: pexelsKey } });
-      if (resp.ok) {
-        const data = await resp.json();
-        const items = (data.photos || []).map(p => ({
-          source: 'pexels',
-          type: 'photo',
-          id: p.id,
-          title: p.alt || keyword,
-          thumbnail: p.src.medium,
-          url: p.url,
-          downloadUrl: p.src.original,
-          previewUrl: p.src.large || p.src.medium,
-          keyword
-        }));
-        results.push(...items);
-      }
+    const pR = await fetch(`https://pixabay.com/api/?key=${pixKey}&q=${encodeURIComponent(kw)}&per_page=${Math.ceil(limit / 2)}&image_type=photo`);
+    if (pR.ok) {
+      const d = await pR.json();
+      (d.hits || []).forEach(p => results.push({
+        source: 'pixabay', type: 'photo', id: p.id,
+        title: p.tags || kw,
+        thumbnail: p.webformatURL,
+        url: p.pageURL,
+        downloadUrl: p.largeImageURL,
+        keyword: kw
+      }));
+    }
+    return results;
+  } catch { return []; }
+}
+
+/* ══════════════════════════════════════════
+   FETCH: PEXELS
+══════════════════════════════════════════ */
+async function fetchPexels(kw, limit, key) {
+  const results = [];
+  try {
+    const vR = await fetch(
+      `https://api.pexels.com/videos/search?query=${encodeURIComponent(kw)}&per_page=${Math.ceil(limit / 2)}`,
+      { headers: { Authorization: key } }
+    );
+    if (vR.ok) {
+      const d = await vR.json();
+      (d.videos || []).forEach(v => results.push({
+        source: 'pexels', type: 'video', id: v.id,
+        title: kw + ' video', thumbnail: v.image,
+        url: `https://www.pexels.com/video/${v.id}/`,
+        downloadUrl: (v.video_files.find(f => f.quality === 'hd') || v.video_files[0])?.link,
+        keyword: kw
+      }));
+    }
+    const pR = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(kw)}&per_page=${Math.ceil(limit / 2)}`,
+      { headers: { Authorization: key } }
+    );
+    if (pR.ok) {
+      const d = await pR.json();
+      (d.photos || []).forEach(p => results.push({
+        source: 'pexels', type: 'photo', id: p.id,
+        title: p.alt || kw, thumbnail: p.src.medium,
+        url: p.url, downloadUrl: p.src.original, keyword: kw
+      }));
     }
   } catch {}
   return results;
 }
 
-function setStatus(msg, state = 'running') {
-  const el = document.getElementById('statusBar');
-  el.textContent = msg;
-  el.className = `status-bar visible ${state}`;
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-function setProgress(pct, label) {
-  document.getElementById('progressWrap').className = 'progress-wrap visible';
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = label;
-}
+/* ══════════════════════════════════════════
+   SELECTION SYSTEM
+══════════════════════════════════════════ */
+function itemKey(si, ri) { return `${si}-${ri}`; }
 
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function downloadFile(url, filename) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  a.download = filename || '';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-function openMedia(r) {
-  if (r.downloadUrl) {
-    window.open(r.downloadUrl, '_blank', 'noopener');
+function toggleSelect(si, ri, cardEl) {
+  const key = itemKey(si, ri);
+  if (selectedItems.has(key)) {
+    selectedItems.delete(key);
+    cardEl.classList.remove('selected');
   } else {
-    window.open(r.url, '_blank', 'noopener');
+    selectedItems.add(key);
+    cardEl.classList.add('selected');
+  }
+  updateSelectionUI(si);
+}
+
+function selectAllInScene(si) {
+  const scene = allResults[si];
+  scene.results.forEach((_, ri) => {
+    const key = itemKey(si, ri);
+    const card = document.querySelector(`[data-si="${si}"][data-ri="${ri}"]`);
+    selectedItems.add(key);
+    if (card) card.classList.add('selected');
+  });
+  updateSelectionUI(si);
+}
+
+function deselectAllInScene(si) {
+  const scene = allResults[si];
+  scene.results.forEach((_, ri) => {
+    const key = itemKey(si, ri);
+    selectedItems.delete(key);
+    const card = document.querySelector(`[data-si="${si}"][data-ri="${ri}"]`);
+    if (card) card.classList.remove('selected');
+  });
+  updateSelectionUI(si);
+}
+
+function selectAll() {
+  allResults.forEach((scene, si) => {
+    scene.results.forEach((_, ri) => {
+      selectedItems.add(itemKey(si, ri));
+      const card = document.querySelector(`[data-si="${si}"][data-ri="${ri}"]`);
+      if (card) card.classList.add('selected');
+    });
+    updateSelectionUI(si);
+  });
+  updateGlobalBar();
+}
+
+function deselectAll() {
+  selectedItems.clear();
+  document.querySelectorAll('.mc.selected').forEach(el => el.classList.remove('selected'));
+  allResults.forEach((_, si) => updateSelectionUI(si));
+  updateGlobalBar();
+}
+
+function updateSelectionUI(si) {
+  const bar = document.getElementById(`bulk-bar-${si}`);
+  if (!bar) return;
+  const scene = allResults[si];
+  const count = scene.results.filter((_, ri) => selectedItems.has(itemKey(si, ri))).length;
+  const lbl = bar.querySelector('.bulk-lbl');
+  if (lbl) lbl.innerHTML = `<span>${count}</span> of ${scene.results.length} selected`;
+  updateGlobalBar();
+}
+
+function updateGlobalBar() {
+  const bar = document.getElementById('globalSelBar');
+  if (!bar) return;
+  const total = selectedItems.size;
+  if (total > 0) {
+    bar.classList.add('vis');
+    document.getElementById('gslCount').textContent = total;
+  } else {
+    bar.classList.remove('vis');
   }
 }
 
-function renderResults(scenes) {
-  const area = document.getElementById('resultsArea');
-  const totalResults = scenes.reduce((a, s) => a + s.results.length, 0);
+/* ══════════════════════════════════════════
+   DOWNLOAD SINGLE ITEM
+══════════════════════════════════════════ */
+function downloadItem(r, statusEl) {
+  return new Promise(async (resolve) => {
+    const url = r.downloadUrl || r.url;
+    if (!url) { if (statusEl) statusEl.textContent = 'No URL'; resolve('error'); return; }
 
-  area.innerHTML = `
-    <div class="results-header">
-      <div class="results-stats">
-        Done — <span>${totalResults.toLocaleString()}</span> results across <span>${scenes.length}</span> scenes
-      </div>
-      <div class="results-actions">
-        <button class="action-btn" onclick="exportAs('json')">Export JSON</button>
-        <button class="action-btn primary" onclick="exportAs('urls')">URL List</button>
-      </div>
-    </div>
-    <div class="scenes-container" id="scenesContainer"></div>
-  `;
+    if (statusEl) { statusEl.textContent = 'fetching...'; statusEl.className = 'dl-status fetching'; }
 
-  const container = document.getElementById('scenesContainer');
-  scenes.forEach((scene, i) => {
-    const block = document.createElement('div');
-    block.className = 'scene-block';
-    block.innerHTML = `
-      <div class="scene-header" onclick="toggleScene(this)">
-        <div class="scene-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="scene-text">${escHtml(scene.sentence)}</div>
-        <div class="scene-meta">
-          <div class="scene-count">${scene.results.length} clips</div>
-          <div class="chevron">›</div>
-        </div>
-      </div>
-      <div class="media-grid">
-        ${scene.results.slice(0,20).map(r => renderCard(r)).join('')}
-      </div>
-    `;
-    container.appendChild(block);
+    try {
+      const ext = url.split('?')[0].split('.').pop().split('/').pop() || (r.type === 'video' ? 'mp4' : 'jpg');
+      const safeName = (r.title || 'media').replace(/[^a-z0-9_\-]/gi, '_').slice(0, 50);
+      const filename = `${r.source}_${safeName}.${ext}`;
+
+      // try direct fetch (works when CORS allows)
+      const resp = await fetch(url, { mode: 'cors' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const blob = await resp.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+      if (statusEl) { statusEl.textContent = 'saved ✓'; statusEl.className = 'dl-status done'; }
+      resolve('done');
+    } catch {
+      // CORS blocked — fallback: open source page so user can save manually
+      window.open(r.url, '_blank');
+      if (statusEl) { statusEl.textContent = 'opened (CORS) ↗'; statusEl.className = 'dl-status error'; }
+      resolve('cors');
+    }
   });
-
-  setTimeout(() => {
-    document.querySelectorAll('.media-card .thumb').forEach(img => {
-      img.onload = () => img.classList.add('loaded');
-      img.src = img.dataset.src;
-    });
-  }, 100);
 }
 
-function renderCard(r) {
-  const typeClass = r.type === 'video' ? 'pill-video' : 'pill-photo';
-  const srcClass = `pill-${r.source}`;
-  const icon = r.type === 'video' ? '▶' : '⬛';
-  const preview = r.previewUrl || r.thumbnail || '';
-  const safeUrl = escHtml(r.url || '');
-  const safeDownload = escHtml(r.downloadUrl || r.url || '');
-  return `
-    <div class="media-card">
-      ${preview
-        ? `<img class="thumb" data-src="${escHtml(preview)}" alt="${escHtml(r.title)}" onclick="openMedia(${JSON.stringify(r).replace(/"/g, '&quot;')})">`
-        : `<div class="media-card-placeholder" onclick="openMedia(${JSON.stringify(r).replace(/"/g, '&quot;')})">${icon}</div>`}
-      <div class="media-card-overlay">
-        <div class="overlay-top">
-          <span class="media-type-pill ${typeClass}">${r.type}</span>
-          <span class="media-type-pill ${srcClass}">${r.source}</span>
-        </div>
-        <div class="overlay-bottom">
-          <button class="card-btn" onclick='event.stopPropagation(); openMedia(${JSON.stringify(r).replace(/"/g, "&quot;")})'>Preview</button>
-          <button class="card-btn" onclick='event.stopPropagation(); downloadFile("${safeDownload}", "media-${r.id}.${r.type === "video" ? "mp4" : "jpg"}")'>Download</button>
-        </div>
+/* ══════════════════════════════════════════
+   DOWNLOAD QUEUE MODAL
+══════════════════════════════════════════ */
+function openDownloadQueue() {
+  const items = [];
+  selectedItems.forEach(key => {
+    const [si, ri] = key.split('-').map(Number);
+    if (allResults[si]?.results[ri]) items.push({ si, ri, r: allResults[si].results[ri] });
+  });
+  if (!items.length) { alert('No items selected. Click cards to select them first.'); return; }
+
+  const queue = document.getElementById('dlQueue');
+  queue.innerHTML = items.map(({ si, ri, r }) => `
+    <div class="dl-item" id="dl-item-${si}-${ri}">
+      ${r.thumbnail
+        ? `<img class="dl-thumb" src="${esc(r.thumbnail)}" alt="">`
+        : `<div class="dl-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)">▶</div>`}
+      <div class="dl-info">
+        <div class="dl-title">${esc(r.title)}</div>
+        <div class="dl-meta">${r.source} · ${r.type} · ${r.keyword}</div>
       </div>
+      <div class="dl-status pending" id="dl-st-${si}-${ri}">pending</div>
+      <a class="dl-btn" href="${esc(r.url)}" target="_blank">Open ↗</a>
+    </div>
+  `).join('');
+
+  document.getElementById('dlModal').classList.add('open');
+}
+
+async function downloadAllQueued() {
+  const btn = document.getElementById('dlAllBtn');
+  btn.disabled = true;
+  btn.textContent = 'Downloading...';
+
+  const items = [];
+  selectedItems.forEach(key => {
+    const [si, ri] = key.split('-').map(Number);
+    if (allResults[si]?.results[ri]) items.push({ si, ri, r: allResults[si].results[ri] });
+  });
+
+  for (const { si, ri, r } of items) {
+    const statusEl = document.getElementById(`dl-st-${si}-${ri}`);
+    await downloadItem(r, statusEl);
+    await new Promise(res => setTimeout(res, 400)); // small gap between downloads
+  }
+
+  btn.textContent = 'Done ✓';
+  setTimeout(() => { btn.disabled = false; btn.textContent = '⬇ Download All'; }, 2000);
+}
+
+/* ══════════════════════════════════════════
+   RENDER RESULTS
+══════════════════════════════════════════ */
+function renderCard(r, si, ri) {
+  const typePill = `<span class="pill ${r.type === 'video' ? 'p-vid' : 'p-ph'}">${r.type}</span>`;
+  const srcPill  = `<span class="pill p-${r.source}">${r.source}</span>`;
+  return `
+    <div class="mc" data-si="${si}" data-ri="${ri}"
+         onclick="handleCardClick(event, ${si}, ${ri}, this)"
+         title="${esc(r.title)}">
+      ${r.thumbnail
+        ? `<img data-src="${esc(r.thumbnail)}" alt="${esc(r.title)}">`
+        : `<div class="mc-ph">${r.type === 'video' ? '▶' : '⬛'}</div>`}
+      <div class="mc-ov">${typePill}${srcPill}</div>
+      <div class="mc-sel-check">✓</div>
+      <button class="mc-dl-btn" onclick="event.stopPropagation();singleDownload(${si},${ri})">⬇ DL</button>
     </div>`;
 }
 
-function toggleScene(header) {
-  header.parentElement.classList.toggle('open');
+function handleCardClick(e, si, ri, el) {
+  if (e.target.classList.contains('mc-dl-btn')) return;
+  toggleSelect(si, ri, el);
 }
 
-function exportAs(mode) {
-  exportMode = mode;
-  if (mode === 'json') {
-    document.getElementById('exportData').textContent = JSON.stringify(allResults, null, 2);
-  } else {
-    const lines = allResults.flatMap((s, idx) =>
-      s.results.map(r => `[Scene ${idx + 1}] [${r.source}/${r.type}] ${r.downloadUrl || r.url}`)
-    );
-    document.getElementById('exportData').textContent = lines.join('\n');
-  }
+function singleDownload(si, ri) {
+  const r = allResults[si]?.results[ri];
+  if (!r) return;
+  downloadItem(r, null);
+}
+
+function renderResults(scenes) {
+  const area = document.getElementById('resArea');
+  const total = scenes.reduce((a, s) => a + s.results.length, 0);
+
+  area.innerHTML = `
+    <!-- Global selection bar (sticky) -->
+    <div class="global-sel-bar" id="globalSelBar">
+      <div class="gsl-lbl"><span id="gslCount">0</span> items selected globally</div>
+      <button class="abtn" onclick="selectAll()">Select All</button>
+      <button class="abtn" onclick="deselectAll()">Deselect All</button>
+      <button class="abtn success" onclick="openDownloadQueue()">⬇ Download Selected</button>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-header">
+      <div class="results-stats">
+        Done — <span>${total.toLocaleString()}</span> clips across <span>${scenes.length}</span> scenes
+      </div>
+      <div class="results-actions">
+        <button class="abtn" onclick="selectAll()">Select All</button>
+        <button class="abtn danger" onclick="deselectAll()">Deselect All</button>
+        <button class="abtn success" onclick="openDownloadQueue()">⬇ Download Selected</button>
+        <button class="abtn" onclick="expJSON()">Export JSON</button>
+        <button class="abtn pri" onclick="expURLs()">URL List</button>
+      </div>
+    </div>
+
+    <div class="scenes-wrap" id="scenesWrap"></div>
+  `;
+
+  const wrap = document.getElementById('scenesWrap');
+
+  scenes.forEach((scene, si) => {
+    const block = document.createElement('div');
+    block.className = 'scene-block';
+    block.innerHTML = `
+      <div class="scene-hdr" onclick="this.parentElement.classList.toggle('open')">
+        <div class="scene-num">${String(si + 1).padStart(2, '0')}</div>
+        <div class="scene-txt">${esc(scene.sentence)}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <div class="scene-cnt">${scene.results.length} clips</div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+      <div class="media-grid" id="grid-${si}">
+        ${scene.results.slice(0, 24).map((r, ri) => renderCard(r, si, ri)).join('')}
+      </div>
+      <div class="scene-bulk-bar" id="bulk-bar-${si}">
+        <div class="bulk-lbl"><span>0</span> of ${scene.results.length} selected</div>
+        <button class="abtn" style="font-size:9px;padding:4px 9px" onclick="selectAllInScene(${si})">Select All</button>
+        <button class="abtn" style="font-size:9px;padding:4px 9px" onclick="deselectAllInScene(${si})">Deselect All</button>
+        <button class="abtn success" style="font-size:9px;padding:4px 9px" onclick="openDownloadQueue()">⬇ Download Selected</button>
+      </div>
+    `;
+    wrap.appendChild(block);
+  });
+
+  // Lazy-load thumbnails
+  setTimeout(() => {
+    document.querySelectorAll('.mc img[data-src]').forEach(img => {
+      img.onload = () => img.classList.add('ld');
+      img.onerror = () => img.style.display = 'none';
+      img.src = img.dataset.src;
+    });
+  }, 80);
+}
+
+/* ══════════════════════════════════════════
+   EXPORT
+══════════════════════════════════════════ */
+function expJSON() {
+  document.getElementById('exportData').textContent = JSON.stringify(allResults, null, 2);
   document.getElementById('exportModal').classList.add('open');
 }
-function closeModal() { document.getElementById('exportModal').classList.remove('open'); }
-function copyExport() {
-  navigator.clipboard.writeText(document.getElementById('exportData').textContent);
-  const btn = event.target;
-  btn.textContent = 'Copied!';
-  setTimeout(() => btn.textContent = exportMode === 'json' ? 'Copy JSON' : 'Copy List', 1500);
+function expURLs() {
+  const lines = allResults.flatMap(s =>
+    s.results.map(r => `[Scene ${s.index}] [${r.source}/${r.type}] ${r.downloadUrl || r.url}`)
+  );
+  document.getElementById('exportData').textContent = lines.join('\n');
+  document.getElementById('exportModal').classList.add('open');
 }
-function downloadExport() {
+function copyExp() {
+  navigator.clipboard.writeText(document.getElementById('exportData').textContent);
+  const b = event.target; b.textContent = 'Copied!';
+  setTimeout(() => b.textContent = 'Copy', 1500);
+}
+function dlExp() {
   const text = document.getElementById('exportData').textContent;
-  const blob = new Blob([text], { type: exportMode === 'json' ? 'application/json' : 'text/plain' });
+  const isJ = text.trim().startsWith('[');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = exportMode === 'json' ? 'footage-results.json' : 'footage-urls.txt';
+  a.href = URL.createObjectURL(new Blob([text], { type: isJ ? 'application/json' : 'text/plain' }));
+  a.download = isJ ? 'footage-results.json' : 'footage-urls.txt';
   a.click();
 }
 
-async function runScraper() {
+/* ══════════════════════════════════════════
+   MAIN RUN
+══════════════════════════════════════════ */
+async function run() {
   if (isRunning) return;
 
-  const script = document.getElementById('scriptInput').value.trim();
-  const openrouterKey = document.getElementById('openrouterKey').value.trim();
-  const pexelsKey = document.getElementById('pexelsKey').value.trim();
-  const resultsPerSentence = parseInt(document.getElementById('resultsPerSentence').value);
-  const minLength = parseInt(document.getElementById('minLength').value);
-  const batchSize = parseInt(document.getElementById('batchSize').value);
-  const model = document.getElementById('aiModel').value;
+  const script   = document.getElementById('scriptInput').value.trim();
+  const model    = document.getElementById('model').value;
+  const rps      = parseInt(document.getElementById('rps').value);
+  const minL     = parseInt(document.getElementById('minLen').value);
+  const pexKey   = getKey('pexels') || document.getElementById('pexelsKey').value.trim();
 
-  if (!script) { setStatus('⚠ Paste your script first.', 'error'); return; }
-  if (!openrouterKey) { setStatus('⚠ OpenRouter API key is required.', 'error'); return; }
-  if (!sources.coverr && !sources.openverse && !sources.pexels) { setStatus('⚠ Enable at least one media source.', 'error'); return; }
-  if (sources.pexels && !pexelsKey) { setStatus('⚠ Pexels key required when Pexels source is enabled.', 'error'); return; }
-  if (!mediaTypes.video && !mediaTypes.photo) { setStatus('⚠ Enable at least one media type.', 'error'); return; }
+  if (!script) { setSt('⚠ Paste your script first.', 'err'); return; }
+  if (!getKey('anthropic')) { setSt('⚠ Anthropic API key required — add it in the API Keys panel.', 'err'); return; }
+  if (!Object.values(srcs).some(Boolean)) { setSt('⚠ Enable at least one source.', 'err'); return; }
+  if (srcs.pex && !pexKey) { setSt('⚠ Pexels key required when Pexels is enabled. Add it in the API Keys panel.', 'err'); return; }
 
   isRunning = true;
+  selectedItems.clear();
   document.getElementById('runBtn').disabled = true;
   allResults = [];
 
-  const sentences = parseSentences(script, minLength);
-  if (sentences.length === 0) {
-    setStatus('⚠ No sentences found meeting minimum length.', 'error');
-    isRunning = false;
-    document.getElementById('runBtn').disabled = false;
-    return;
+  const sentences = parseSentences(script, minL);
+  if (!sentences.length) {
+    setSt('⚠ No sentences found. Lower the minimum sentence length.', 'err');
+    isRunning = false; document.getElementById('runBtn').disabled = false; return;
   }
 
-  setStatus(`Analyzing ${sentences.length} scenes...`, 'running');
-  document.getElementById('resultsArea').innerHTML = '';
-
-  const batches = [];
-  for (let i = 0; i < sentences.length; i += batchSize) batches.push(sentences.slice(i, i + batchSize));
-
+  setSt(`Analyzing ${sentences.length} scenes with Claude AI...`, 'run');
+  document.getElementById('resArea').innerHTML = '';
   const tempResults = [];
 
   try {
-    for (let b = 0; b < batches.length; b++) {
-      const batch = batches[b];
-      setStatus(`🤖 Getting keywords — batch ${b+1}/${batches.length}`, 'running');
-      setProgress(((b / batches.length) * 40), `AI batch ${b+1} of ${batches.length}`);
+    const BATCH = 5;
+    for (let b = 0; b < sentences.length; b += BATCH) {
+      const batch = sentences.slice(b, b + BATCH);
+      const bNum = Math.floor(b / BATCH) + 1;
+      const bTotal = Math.ceil(sentences.length / BATCH);
+      setSt(`🤖 Claude analyzing — batch ${bNum}/${bTotal}`, 'run');
+      setProg((bNum / bTotal) * 35, `AI batch ${bNum} of ${bTotal}`);
 
-      let kwResults;
-      try {
-        kwResults = await getKeywordsForBatch(batch, openrouterKey, model);
-      } catch (e) {
-        setStatus(`⚠ AI error on batch ${b+1}: ${e.message}`, 'error');
-        continue;
-      }
+      let kwR;
+      try { kwR = await getKeywords(batch, model); }
+      catch (e) { setSt(`⚠ AI error: ${e.message}`, 'err'); continue; }
 
-      for (let s = 0; s < kwResults.length; s++) {
-        const item = kwResults[s];
-        const overallIdx = b * batchSize + s;
-        const pct = 40 + ((overallIdx / sentences.length) * 55);
-        setProgress(pct, `Fetching footage for scene ${overallIdx+1}/${sentences.length}`);
+      for (let s = 0; s < kwR.length; s++) {
+        const item = kwR[s];
+        const idx  = b + s;
+        const pct  = 35 + (idx / sentences.length) * 60;
+        setProg(pct, `Fetching clips for scene ${idx + 1}/${sentences.length}`);
 
-        const sceneResults = [];
-        const perKw = Math.max(2, Math.floor(resultsPerSentence / (item.keywords?.length || 1)));
+        const sceneRes = [];
+        const perKw = Math.max(2, Math.floor(rps / (item.keywords?.length || 1)));
 
         for (const kw of (item.keywords || [])) {
           const fetches = [];
-          if (sources.coverr && mediaTypes.video) fetches.push(fetchCoverr(kw, perKw));
-          if (sources.openverse) fetches.push(fetchOpenverse(kw, perKw, mediaTypes.video, mediaTypes.photo));
-          if (sources.pexels && pexelsKey) fetches.push(fetchPexels(kw, perKw, pexelsKey, mediaTypes.video, mediaTypes.photo));
+          if (srcs.ia)  fetches.push(fetchInternetArchive(kw, perKw));
+          if (srcs.op)  fetches.push(fetchOpenverse(kw, perKw));
+          if (srcs.cov) fetches.push(fetchCoverr(kw, perKw));
+          if (srcs.wtv) fetches.push(fetchWikimediaVideo(kw, perKw));
+          if (srcs.dp)  fetches.push(fetchPixabay(kw, perKw));
+          if (srcs.pex && pexKey) fetches.push(fetchPexels(kw, perKw, pexKey));
 
-          const fetchedArrays = await Promise.all(fetches);
-          fetchedArrays.forEach(arr => sceneResults.push(...arr));
-          await new Promise(r => setTimeout(r, 150));
+          const arrs = await Promise.all(fetches);
+          arrs.forEach(a => sceneRes.push(...a));
+          await new Promise(r => setTimeout(r, 120));
         }
 
         tempResults.push({
-          index: overallIdx + 1,
+          index: idx + 1,
           sentence: item.sentence || batch[s],
           keywords: item.keywords || [],
-          results: sceneResults
+          results: sceneRes
         });
       }
     }
 
     allResults = tempResults.sort((a, b) => a.index - b.index);
     const total = allResults.reduce((a, s) => a + s.results.length, 0);
-
-    setProgress(100, 'Complete');
-    setStatus(`Done — ${total.toLocaleString()} results found across ${allResults.length} scenes.`, 'done');
+    setProg(100, 'Complete');
+    setSt(`Done — ${total.toLocaleString()} clips found across ${allResults.length} scenes. Click cards to select, then download.`, 'done');
     renderResults(allResults);
+
   } catch (e) {
-    setStatus(`Error: ${e.message}`, 'error');
+    setSt(`Error: ${e.message}`, 'err');
   } finally {
     isRunning = false;
     document.getElementById('runBtn').disabled = false;
