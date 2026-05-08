@@ -706,7 +706,7 @@
     </div>
     <div class="modal-body">
       <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-        Direct browser download attempts each file. If a download is blocked by CORS, use the <strong style="color:var(--gold)">Open</strong> link to save manually from the source site.
+        Browser will attempt direct download for each file. <strong style="color:var(--gold)">Coverr / Pixabay / Openverse / Pexels</strong> — direct download via CDN link. <strong style="color:#fca5a5">Archive.org</strong> — always opens the detail page so you can pick quality. If a download is blocked by CORS, use the <strong style="color:var(--gold)">Open ↗</strong> button to save manually.
       </div>
       <div class="dl-queue" id="dlQueue"></div>
     </div>
@@ -979,12 +979,22 @@ async function fetchCoverr(kw, limit) {
     const resp = await fetch(`https://coverr.co/api/videos?keywords=${encodeURIComponent(kw)}&per_page=${limit}`);
     if (!resp.ok) return [];
     const data = await resp.json();
-    return (data.hits || []).map(v => ({
-      source: 'coverr', type: 'video', id: v.id,
-      title: v.title || kw,
-      thumbnail: v.cover_url || '',
-      url: v.url, downloadUrl: v.mp4_url || v.url, keyword: kw
-    }));
+    return (data.hits || []).map(v => {
+      // Coverr CDN pattern — mp4_url may be absent, build it from the slug/id
+      const slug = v.slug || v.id || '';
+      const mp4 = v.mp4_url
+        || v.url_mp4
+        || (slug ? `https://cdn.coverr.co/videos/coverr-${slug}-1080p.mp4` : '');
+      const pageUrl = v.url || `https://coverr.co/videos/${slug}`;
+      return {
+        source: 'coverr', type: 'video', id: v.id,
+        title: v.title || kw,
+        thumbnail: v.cover_url || v.preview_url || '',
+        url: pageUrl,
+        downloadUrl: mp4 || pageUrl,
+        keyword: kw
+      };
+    });
   } catch { return []; }
 }
 
@@ -1177,33 +1187,90 @@ function updateGlobalBar() {
 /* ══════════════════════════════════════════
    DOWNLOAD SINGLE ITEM
 ══════════════════════════════════════════ */
+
+// Resolve the best direct-file URL for a result object
+function resolveDirectUrl(r) {
+  // Already a direct media file URL?
+  const dl = r.downloadUrl || '';
+  const directExts = /\.(mp4|webm|ogv|mov|avi|jpg|jpeg|png|gif|webp)(\?|$)/i;
+  if (dl && directExts.test(dl)) return dl;
+
+  // Source-specific fallbacks
+  if (r.source === 'coverr') {
+    // Try to build CDN URL from slug in the page URL
+    const slugMatch = (r.url || '').match(/coverr\.co\/videos\/([^/?#]+)/);
+    if (slugMatch) {
+      return `https://cdn.coverr.co/videos/coverr-${slugMatch[1]}-1080p.mp4`;
+    }
+  }
+  if (r.source === 'pixabay' && r.downloadUrl) return r.downloadUrl;
+  if (r.source === 'openverse' && r.downloadUrl) return r.downloadUrl;
+  if (r.source === 'pexels' && r.downloadUrl) return r.downloadUrl;
+  if (r.source === 'wikimedia' && r.downloadUrl) return r.downloadUrl;
+
+  return dl || null; // may be empty for archive.org (handled separately)
+}
+
 function downloadItem(r, statusEl) {
   return new Promise(async (resolve) => {
-    const url = r.downloadUrl || r.url;
-    if (!url) { if (statusEl) statusEl.textContent = 'No URL'; resolve('error'); return; }
+    if (statusEl) { statusEl.textContent = 'resolving...'; statusEl.className = 'dl-status fetching'; }
 
-    if (statusEl) { statusEl.textContent = 'fetching...'; statusEl.className = 'dl-status fetching'; }
+    // Internet Archive — open detail page so user can pick quality
+    if (r.source === 'archive') {
+      window.open(r.url, '_blank');
+      if (statusEl) { statusEl.textContent = 'opened archive ↗'; statusEl.className = 'dl-status error'; }
+      resolve('manual');
+      return;
+    }
 
+    const directUrl = resolveDirectUrl(r);
+
+    if (!directUrl) {
+      // No usable URL — open the page
+      if (r.url) window.open(r.url, '_blank');
+      if (statusEl) { statusEl.textContent = 'no direct URL ↗'; statusEl.className = 'dl-status error'; }
+      resolve('error');
+      return;
+    }
+
+    const rawExt = directUrl.split('?')[0].split('.').pop().toLowerCase();
+    const ext = rawExt.length <= 4 ? rawExt : (r.type === 'video' ? 'mp4' : 'jpg');
+    const safeName = (r.title || r.keyword || 'media').replace(/[^a-z0-9_\-]/gi, '_').slice(0, 60);
+    const filename = `${r.source}_${safeName}.${ext}`;
+
+    // Strategy 1: invisible <a download> — works for same-origin or CORS-permissive servers
     try {
-      const ext = url.split('?')[0].split('.').pop().split('/').pop() || (r.type === 'video' ? 'mp4' : 'jpg');
-      const safeName = (r.title || 'media').replace(/[^a-z0-9_\-]/gi, '_').slice(0, 50);
-      const filename = `${r.source}_${safeName}.${ext}`;
+      const a = document.createElement('a');
+      a.href = directUrl;
+      a.download = filename;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      if (statusEl) { statusEl.textContent = 'downloading ✓'; statusEl.className = 'dl-status done'; }
+      resolve('done');
+      return;
+    } catch {}
 
-      // try direct fetch (works when CORS allows)
-      const resp = await fetch(url, { mode: 'cors' });
+    // Strategy 2: blob fetch (works when CORS headers are present)
+    try {
+      if (statusEl) { statusEl.textContent = 'fetching blob...'; statusEl.className = 'dl-status fetching'; }
+      const resp = await fetch(directUrl, { mode: 'cors' });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      a.href = blobUrl;
       a.download = filename;
       a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
       if (statusEl) { statusEl.textContent = 'saved ✓'; statusEl.className = 'dl-status done'; }
       resolve('done');
     } catch {
-      // CORS blocked — fallback: open source page so user can save manually
-      window.open(r.url, '_blank');
-      if (statusEl) { statusEl.textContent = 'opened (CORS) ↗'; statusEl.className = 'dl-status error'; }
+      // Strategy 3: open the source page as last resort
+      window.open(r.url || directUrl, '_blank');
+      if (statusEl) { statusEl.textContent = 'CORS blocked — opened ↗'; statusEl.className = 'dl-status error'; }
       resolve('cors');
     }
   });
@@ -1221,19 +1288,26 @@ function openDownloadQueue() {
   if (!items.length) { alert('No items selected. Click cards to select them first.'); return; }
 
   const queue = document.getElementById('dlQueue');
-  queue.innerHTML = items.map(({ si, ri, r }) => `
+  queue.innerHTML = items.map(({ si, ri, r }) => {
+    const directUrl = resolveDirectUrl(r);
+    const urlLabel = directUrl
+      ? (directUrl.length > 55 ? directUrl.slice(0, 52) + '...' : directUrl)
+      : (r.source === 'archive' ? 'Click Open to browse archive' : 'No direct URL — use Open');
+    const urlColor = directUrl ? '#4a6a4a' : '#6a4a2a';
+    return `
     <div class="dl-item" id="dl-item-${si}-${ri}">
       ${r.thumbnail
-        ? `<img class="dl-thumb" src="${esc(r.thumbnail)}" alt="">`
+        ? `<img class="dl-thumb" src="${esc(r.thumbnail)}" alt="" onerror="this.style.display='none'">`
         : `<div class="dl-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)">▶</div>`}
       <div class="dl-info">
         <div class="dl-title">${esc(r.title)}</div>
         <div class="dl-meta">${r.source} · ${r.type} · ${r.keyword}</div>
+        <div class="dl-meta" style="color:${urlColor};margin-top:2px;font-size:8px">${urlLabel}</div>
       </div>
       <div class="dl-status pending" id="dl-st-${si}-${ri}">pending</div>
-      <a class="dl-btn" href="${esc(r.url)}" target="_blank">Open ↗</a>
+      <a class="dl-btn" href="${esc(directUrl || r.url)}" target="_blank" rel="noopener">Open ↗</a>
     </div>
-  `).join('');
+  `}).join('');
 
   document.getElementById('dlModal').classList.add('open');
 }
