@@ -705,8 +705,10 @@
       <button class="modal-close" onclick="closeModal('dlModal')">✕</button>
     </div>
     <div class="modal-body">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-        Browser will attempt direct download for each file. <strong style="color:var(--gold)">Coverr / Pixabay / Openverse / Pexels</strong> — direct download via CDN link. <strong style="color:#fca5a5">Archive.org</strong> — always opens the detail page so you can pick quality. If a download is blocked by CORS, use the <strong style="color:var(--gold)">Open ↗</strong> button to save manually.
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.8">
+        <span style="color:var(--green)">✓ Direct download:</span> Pixabay · Openverse · Pexels · Wikimedia<br>
+        <span style="color:#f97316">↗ Opens page (right-click Save):</span> Coverr (CDN is browser-session locked) · Archive.org (pick quality)<br>
+        If any download is blocked by CORS, use the <strong style="color:var(--gold)">Open ↗</strong> button.
       </div>
       <div class="dl-queue" id="dlQueue"></div>
     </div>
@@ -980,18 +982,24 @@ async function fetchCoverr(kw, limit) {
     if (!resp.ok) return [];
     const data = await resp.json();
     return (data.hits || []).map(v => {
-      // Coverr CDN pattern — mp4_url may be absent, build it from the slug/id
       const slug = v.slug || v.id || '';
-      const mp4 = v.mp4_url
-        || v.url_mp4
-        || (slug ? `https://cdn.coverr.co/videos/coverr-${slug}-1080p.mp4` : '');
-      const pageUrl = v.url || `https://coverr.co/videos/${slug}`;
+      const pageUrl = v.url || (slug ? `https://coverr.co/videos/${slug}` : '');
+      // Grab ANY mp4/video URL the API returns — field names vary by API version
+      const directMp4 = v.mp4_url || v.url_mp4 || v.video_url || v.file_url
+        || v.download_url || v.hd_url || v.sd_url
+        || (v.urls && (v.urls.mp4 || v.urls.hd || v.urls.sd))
+        || '';
+      // Log raw fields once so you can inspect in DevTools console
+      if (window._coverrDebugDone !== slug) {
+        console.log('[Coverr raw fields]', Object.keys(v), v);
+        window._coverrDebugDone = slug;
+      }
       return {
         source: 'coverr', type: 'video', id: v.id,
         title: v.title || kw,
-        thumbnail: v.cover_url || v.preview_url || '',
+        thumbnail: v.cover_url || v.preview_url || v.thumbnail || '',
         url: pageUrl,
-        downloadUrl: mp4 || pageUrl,
+        downloadUrl: directMp4 || '', // empty = will open page
         keyword: kw
       };
     });
@@ -1190,35 +1198,35 @@ function updateGlobalBar() {
 
 // Resolve the best direct-file URL for a result object
 function resolveDirectUrl(r) {
-  // Already a direct media file URL?
   const dl = r.downloadUrl || '';
   const directExts = /\.(mp4|webm|ogv|mov|avi|jpg|jpeg|png|gif|webp)(\?|$)/i;
-  if (dl && directExts.test(dl)) return dl;
-
-  // Source-specific fallbacks
-  if (r.source === 'coverr') {
-    // Try to build CDN URL from slug in the page URL
-    const slugMatch = (r.url || '').match(/coverr\.co\/videos\/([^/?#]+)/);
-    if (slugMatch) {
-      return `https://cdn.coverr.co/videos/coverr-${slugMatch[1]}-1080p.mp4`;
-    }
+  // Only return downloadUrl if it's actually a media file, not a webpage
+  if (dl && directExts.test(dl) && !dl.includes('coverr.co/videos/') && !dl.includes('pexels.com/video')) {
+    return dl;
   }
-  if (r.source === 'pixabay' && r.downloadUrl) return r.downloadUrl;
-  if (r.source === 'openverse' && r.downloadUrl) return r.downloadUrl;
-  if (r.source === 'pexels' && r.downloadUrl) return r.downloadUrl;
-  if (r.source === 'wikimedia' && r.downloadUrl) return r.downloadUrl;
-
-  return dl || null; // may be empty for archive.org (handled separately)
+  // Source-specific: only return if it's a real direct file URL
+  if (r.source === 'pixabay' && dl && directExts.test(dl)) return dl;
+  if (r.source === 'openverse' && dl && directExts.test(dl)) return dl;
+  if (r.source === 'pexels' && dl && directExts.test(dl)) return dl;
+  if (r.source === 'wikimedia' && dl) return dl;
+  // Coverr & Archive — no reliable direct URL, must open page
+  return null;
 }
 
 function downloadItem(r, statusEl) {
   return new Promise(async (resolve) => {
     if (statusEl) { statusEl.textContent = 'resolving...'; statusEl.className = 'dl-status fetching'; }
 
-    // Internet Archive — open detail page so user can pick quality
-    if (r.source === 'archive') {
+    // Coverr & Internet Archive — CDN is IP-allowlisted, direct download blocked outside browser session
+    if (r.source === 'archive' || r.source === 'coverr') {
       window.open(r.url, '_blank');
-      if (statusEl) { statusEl.textContent = 'opened archive ↗'; statusEl.className = 'dl-status error'; }
+      if (statusEl) {
+        const msg = r.source === 'coverr'
+          ? 'opened coverr.co ↗ (right-click → Save)'
+          : 'opened archive.org ↗ (pick quality)';
+        statusEl.textContent = msg;
+        statusEl.className = 'dl-status error';
+      }
       resolve('manual');
       return;
     }
@@ -1290,10 +1298,13 @@ function openDownloadQueue() {
   const queue = document.getElementById('dlQueue');
   queue.innerHTML = items.map(({ si, ri, r }) => {
     const directUrl = resolveDirectUrl(r);
+    const openOnly = r.source === 'coverr' || r.source === 'archive';
     const urlLabel = directUrl
       ? (directUrl.length > 55 ? directUrl.slice(0, 52) + '...' : directUrl)
-      : (r.source === 'archive' ? 'Click Open to browse archive' : 'No direct URL — use Open');
-    const urlColor = directUrl ? '#4a6a4a' : '#6a4a2a';
+      : openOnly
+        ? (r.source === 'coverr' ? '⚠ Coverr CDN blocked — click Open → right-click Save' : '⚠ Archive.org — click Open to pick quality')
+        : 'No direct URL — use Open ↗';
+    const urlColor = directUrl ? '#4a6a4a' : '#7a4a20';
     return `
     <div class="dl-item" id="dl-item-${si}-${ri}">
       ${r.thumbnail
