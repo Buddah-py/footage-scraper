@@ -485,7 +485,7 @@
         <div class="field-group">
           <div class="field-label">
             <span class="src-dot" style="background:var(--gold)"></span>
-            Anthropic API Key <span class="req">* required</span>
+            Anthropic API Key <span style="color:#444;font-size:9px">(for Claude models)</span>
           </div>
           <div class="key-row">
             <input type="password" id="anthropicKey" placeholder="sk-ant-api03-..." autocomplete="off">
@@ -494,9 +494,27 @@
           </div>
           <div class="key-status" id="ks-anthropic">
             <div class="ks-dot unset" id="ksd-anthropic"></div>
-            <span class="ks-txt" id="kst-anthropic">Not set — needed for Claude AI keyword analysis</span>
+            <span class="ks-txt" id="kst-anthropic">Not set — needed for Claude models</span>
           </div>
           <div class="field-hint">Get yours at <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com → API Keys</a></div>
+        </div>
+
+        <!-- OpenRouter -->
+        <div class="field-group">
+          <div class="field-label">
+            <span class="src-dot" style="background:#f97316"></span>
+            OpenRouter API Key <span style="color:#444;font-size:9px">(for open-source models)</span>
+          </div>
+          <div class="key-row">
+            <input type="password" id="openrouterKey" placeholder="sk-or-v1-..." autocomplete="off">
+            <button class="key-eye" onclick="toggleEye('openrouterKey',this)">show</button>
+            <button class="key-save" id="save-openrouter" onclick="saveKey('openrouter')">Save</button>
+          </div>
+          <div class="key-status" id="ks-openrouter">
+            <div class="ks-dot unset" id="ksd-openrouter"></div>
+            <span class="ks-txt" id="kst-openrouter">Not set — needed for Llama, Mistral, Gemini &amp; more</span>
+          </div>
+          <div class="field-hint">Free tier available at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai → Keys</a></div>
         </div>
 
         <!-- Pexels -->
@@ -604,11 +622,35 @@
         </div>
 
         <div>
-          <div class="opt-label">Claude Model</div>
-          <select id="model">
-            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest / cheapest)</option>
-            <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5 (best quality)</option>
+          <div class="opt-label">AI Model</div>
+          <select id="model" onchange="onModelChange()">
+            <optgroup label="── Anthropic (Claude) ──">
+              <option value="anthropic|claude-haiku-4-5-20251001">Claude Haiku 4.5 — fastest / cheapest</option>
+              <option value="anthropic|claude-sonnet-4-5" selected>Claude Sonnet 4.5 — best quality</option>
+              <option value="anthropic|claude-opus-4-5">Claude Opus 4.5 — most powerful</option>
+            </optgroup>
+            <optgroup label="── OpenRouter: Meta Llama ──">
+              <option value="openrouter|meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B Instruct — free tier</option>
+              <option value="openrouter|meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B Instruct — very fast / free</option>
+              <option value="openrouter|meta-llama/llama-3.2-3b-instruct">Llama 3.2 3B — ultra fast / free</option>
+            </optgroup>
+            <optgroup label="── OpenRouter: Mistral ──">
+              <option value="openrouter|mistralai/mistral-7b-instruct">Mistral 7B Instruct — free</option>
+              <option value="openrouter|mistralai/mixtral-8x7b-instruct">Mixtral 8x7B Instruct</option>
+              <option value="openrouter|mistralai/mistral-nemo">Mistral Nemo — free</option>
+            </optgroup>
+            <optgroup label="── OpenRouter: Google ──">
+              <option value="openrouter|google/gemini-flash-1.5">Gemini Flash 1.5</option>
+              <option value="openrouter|google/gemini-flash-1.5-8b">Gemini Flash 1.5 8B — free</option>
+              <option value="openrouter|google/gemma-3-27b-it">Gemma 3 27B — free</option>
+            </optgroup>
+            <optgroup label="── OpenRouter: Other ──">
+              <option value="openrouter|deepseek/deepseek-chat">DeepSeek Chat V3 — free</option>
+              <option value="openrouter|qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B Instruct — free</option>
+              <option value="openrouter|microsoft/phi-3-medium-128k-instruct">Phi-3 Medium 128K — free</option>
+            </optgroup>
           </select>
+          <div id="model-key-hint" style="font-family:'DM Mono',monospace;font-size:9px;color:#3a3a3a;margin-top:5px"></div>
         </div>
 
       </div>
@@ -689,9 +731,10 @@ let isRunning = false;
    KEY MANAGEMENT (localStorage)
 ══════════════════════════════════════════ */
 const KEY_MAP = {
-  anthropic: { label: 'Anthropic', field: 'anthropicKey' },
-  pexels:    { label: 'Pexels',    field: 'pexelsKey'    },
-  pixabay:   { label: 'Pixabay',   field: 'pixabayKey'   }
+  anthropic:   { label: 'Anthropic',   field: 'anthropicKey'   },
+  openrouter:  { label: 'OpenRouter',  field: 'openrouterKey'  },
+  pexels:      { label: 'Pexels',      field: 'pexelsKey'      },
+  pixabay:     { label: 'Pixabay',     field: 'pixabayKey'     }
 };
 
 function getKey(name) {
@@ -709,7 +752,7 @@ function saveKey(name) {
 
 function clearAllKeys() {
   if (!confirm('Clear all saved API keys from this browser?')) return;
-  ['anthropic','pexels','pixabay'].forEach(n => {
+  ['anthropic','openrouter','pexels','pixabay'].forEach(n => {
     localStorage.removeItem(`fs_key_${n}`);
     const field = document.getElementById(KEY_MAP[n].field);
     if (field) field.value = '';
@@ -724,9 +767,10 @@ function updateKeyStatus(name, isSet) {
   dot.className = `ks-dot ${isSet ? 'set' : 'unset'}`;
   txt.className = `ks-txt ${isSet ? 'set' : ''}`;
   const msgs = {
-    anthropic: isSet ? 'Key saved ✓ — Claude AI ready' : 'Not set — needed for Claude AI keyword analysis',
-    pexels:    isSet ? 'Key saved ✓' : 'Not set',
-    pixabay:   isSet ? 'Key saved ✓ — full Pixabay access' : 'Not set — using public tier (limited)'
+    anthropic:  isSet ? 'Key saved ✓ — Claude models ready' : 'Not set — needed for Claude models',
+    openrouter: isSet ? 'Key saved ✓ — Open-source models ready' : 'Not set — needed for Llama, Mistral, Gemini & more',
+    pexels:     isSet ? 'Key saved ✓' : 'Not set',
+    pixabay:    isSet ? 'Key saved ✓ — full Pixabay access' : 'Not set — using public tier (limited)'
   };
   txt.textContent = msgs[name];
 }
@@ -750,7 +794,7 @@ function toggleEye(fieldId, btn) {
 }
 
 function loadSavedKeys() {
-  ['anthropic','pexels','pixabay'].forEach(name => {
+  ['anthropic','openrouter','pexels','pixabay'].forEach(name => {
     const val = getKey(name);
     if (val) {
       const field = document.getElementById(KEY_MAP[name].field);
@@ -758,9 +802,10 @@ function loadSavedKeys() {
       updateKeyStatus(name, true);
     }
   });
+  onModelChange(); // set hint on load
 }
 
-// Load keys on startup
+// Window DOMContentLoaded
 window.addEventListener('DOMContentLoaded', loadSavedKeys);
 
 /* ══════════════════════════════════════════
@@ -796,11 +841,36 @@ function parseSentences(txt, minL) {
 }
 
 /* ══════════════════════════════════════════
-   CLAUDE AI — GET KEYWORDS
+   MODEL HELPERS
 ══════════════════════════════════════════ */
-async function getKeywords(sentences, model) {
-  const anthropicKey = getKey('anthropic');
-  if (!anthropicKey) throw new Error('Anthropic API key not set. Add it in the API Keys panel.');
+function getModelParts() {
+  const val = document.getElementById('model').value;
+  const [provider, ...rest] = val.split('|');
+  return { provider, modelId: rest.join('|') };
+}
+
+function onModelChange() {
+  const { provider } = getModelParts();
+  const hint = document.getElementById('model-key-hint');
+  if (!hint) return;
+  if (provider === 'anthropic') {
+    const set = !!getKey('anthropic');
+    hint.innerHTML = set ? '✓ Anthropic key is set' : '⚠ Requires <strong style="color:var(--gold)">Anthropic API key</strong> in panel 02';
+    hint.style.color = set ? '#4a6a4a' : '#8a6e2f';
+  } else {
+    const set = !!getKey('openrouter');
+    hint.innerHTML = set ? '✓ OpenRouter key is set' : '⚠ Requires <strong style="color:#f97316">OpenRouter API key</strong> in panel 02';
+    hint.style.color = set ? '#4a6a4a' : '#7a4a20';
+  }
+}
+
+/* ══════════════════════════════════════════
+   AI — GET KEYWORDS (multi-provider)
+══════════════════════════════════════════ */
+async function getKeywords(sentences, modelVal) {
+  const [provider, ...rest] = modelVal.split('|');
+  const modelId = rest.join('|');
+
   const prompt = `You are a stock footage search expert for true crime YouTube channels.
 For each sentence, generate 2-4 short search queries (2-5 words each) to find relevant footage, news clips, court imagery, or crime scene photos.
 Focus on VISUAL concepts. For true crime think: courtrooms, police tape, news anchors, city skylines, surveillance footage, detective work, newspapers, crime scene tape, etc.
@@ -809,19 +879,49 @@ Return ONLY valid JSON, no markdown fences: {"results":[{"sentence":"...","keywo
 Sentences:
 ${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`;
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({
-      model,
-      max_tokens: 1200,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!resp.ok) throw new Error(`Claude API: ${resp.status} ${resp.statusText}`);
-  const data = await resp.json();
-  const text = data.content.map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
-  return JSON.parse(text).results;
+  if (provider === 'anthropic') {
+    const key = getKey('anthropic');
+    if (!key) throw new Error('Anthropic API key not set. Add it in the API Keys panel.');
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: modelId, max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(`Claude API ${resp.status}: ${err?.error?.message || resp.statusText}`);
+    }
+    const data = await resp.json();
+    const text = data.content.map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
+    return JSON.parse(text).results;
+
+  } else {
+    // OpenRouter — Llama, Mistral, Gemini, DeepSeek, Qwen, Phi, etc.
+    const key = getKey('openrouter');
+    if (!key) throw new Error('OpenRouter API key not set. Add it in the API Keys panel.');
+    const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://footage-scraper.app',
+        'X-Title': 'Footage Scraper Pro'
+      },
+      body: JSON.stringify({
+        model: modelId,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 1200
+      })
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(`OpenRouter ${resp.status}: ${err?.error?.message || resp.statusText}`);
+    }
+    const data = await resp.json();
+    const text = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g, '').trim();
+    return JSON.parse(text).results;
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -1291,13 +1391,19 @@ async function run() {
   if (isRunning) return;
 
   const script   = document.getElementById('scriptInput').value.trim();
-  const model    = document.getElementById('model').value;
+  const modelVal = document.getElementById('model').value;
+  const { provider } = getModelParts();
   const rps      = parseInt(document.getElementById('rps').value);
   const minL     = parseInt(document.getElementById('minLen').value);
   const pexKey   = getKey('pexels') || document.getElementById('pexelsKey').value.trim();
 
   if (!script) { setSt('⚠ Paste your script first.', 'err'); return; }
-  if (!getKey('anthropic')) { setSt('⚠ Anthropic API key required — add it in the API Keys panel.', 'err'); return; }
+  if (provider === 'anthropic' && !getKey('anthropic')) {
+    setSt('⚠ Anthropic API key required for Claude models — add it in the API Keys panel.', 'err'); return;
+  }
+  if (provider === 'openrouter' && !getKey('openrouter')) {
+    setSt('⚠ OpenRouter API key required for this model — add it in the API Keys panel.', 'err'); return;
+  }
   if (!Object.values(srcs).some(Boolean)) { setSt('⚠ Enable at least one source.', 'err'); return; }
   if (srcs.pex && !pexKey) { setSt('⚠ Pexels key required when Pexels is enabled. Add it in the API Keys panel.', 'err'); return; }
 
@@ -1312,7 +1418,7 @@ async function run() {
     isRunning = false; document.getElementById('runBtn').disabled = false; return;
   }
 
-  setSt(`Analyzing ${sentences.length} scenes with Claude AI...`, 'run');
+  setSt(`Analyzing ${sentences.length} scenes with AI...`, 'run');
   document.getElementById('resArea').innerHTML = '';
   const tempResults = [];
 
@@ -1322,11 +1428,11 @@ async function run() {
       const batch = sentences.slice(b, b + BATCH);
       const bNum = Math.floor(b / BATCH) + 1;
       const bTotal = Math.ceil(sentences.length / BATCH);
-      setSt(`🤖 Claude analyzing — batch ${bNum}/${bTotal}`, 'run');
+      setSt(`🤖 AI analyzing — batch ${bNum}/${bTotal}`, 'run');
       setProg((bNum / bTotal) * 35, `AI batch ${bNum} of ${bTotal}`);
 
       let kwR;
-      try { kwR = await getKeywords(batch, model); }
+      try { kwR = await getKeywords(batch, modelVal); }
       catch (e) { setSt(`⚠ AI error: ${e.message}`, 'err'); continue; }
 
       for (let s = 0; s < kwR.length; s++) {
